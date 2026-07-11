@@ -460,9 +460,85 @@
     .controls-footer {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 8px;
       min-height: 36px;
+    }
+
+    .rtp-info {
+      flex: 0 0 auto;
+      margin-left: auto;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(243, 230, 208, 0.45);
+      text-align: right;
+      line-height: 1.3;
+      white-space: nowrap;
+      background: none;
+      border: none;
+      padding: 4px 0;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s ease;
+    }
+
+    .rtp-info:hover {
+      color: var(--gold);
+    }
+
+    .fairness-grid {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .fairness-block {
+      padding: 8px 10px;
+      border-radius: 9px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(232, 197, 71, 0.15);
+    }
+
+    .fairness-block .label {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .fairness-block .value {
+      font-size: 0.72rem;
+      line-height: 1.4;
+      color: rgba(243, 230, 208, 0.88);
+      word-break: break-all;
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .fairness-block .note {
+      font-size: 0.72rem;
+      line-height: 1.4;
+      color: rgba(243, 230, 208, 0.78);
+    }
+
+    #clientSeedInput {
+      width: 100%;
+      margin-top: 2px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(232, 197, 71, 0.28);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--cream);
+      font-size: 0.72rem;
+      font-family: Consolas, "Courier New", monospace;
+      outline: none;
+    }
+
+    #clientSeedInput:focus {
+      border-color: var(--gold);
     }
 
     .toast {
@@ -627,7 +703,11 @@
       }
 
       .controls-footer {
-        justify-content: flex-start;
+        justify-content: space-between;
+      }
+
+      .rtp-info {
+        font-size: 0.52rem;
       }
 
       .btn-audio-toggle {
@@ -778,11 +858,50 @@
             <span id="labelSound">Sound</span>
           </button>
         </div>
+        <button type="button" class="rtp-info" id="btnRtp" title="RTP &amp; fairness">97% RTP · 3% house edge</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <div class="modal-backdrop" id="rtpModal" role="dialog" aria-modal="true" aria-labelledby="rtpTitle">
+    <div class="modal">
+      <h2 id="rtpTitle">RTP &amp; Fairness</h2>
+      <p class="sub">97% RTP · 3% house edge · Provably fair seeds</p>
+      <div class="fairness-grid">
+        <div class="fairness-block">
+          <span class="label">Return to player</span>
+          <p class="note">Each apple hit doubles your multiplier. Cash out after one hit returns 2× your bet with a 48.5% hit chance — expected return 97% (3% house edge).</p>
+        </div>
+        <div class="fairness-block">
+          <span class="label">Server seed hash (committed)</span>
+          <p class="value" id="rtpServerHash">—</p>
+        </div>
+        <div class="fairness-block">
+          <span class="label">Server seed</span>
+          <p class="value" id="rtpServerSeed">Hidden until round ends</p>
+        </div>
+        <div class="fairness-block">
+          <label class="label" for="clientSeedInput">Client seed</label>
+          <input type="text" id="clientSeedInput" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="fairness-block">
+          <span class="label">Round nonce</span>
+          <p class="value" id="rtpNonce">0</p>
+        </div>
+        <div class="fairness-block">
+          <span class="label">Last roll</span>
+          <p class="value" id="rtpLastRoll">—</p>
+        </div>
+        <div class="fairness-block">
+          <span class="label">Verify</span>
+          <p class="note">SHA-256 of <code>serverSeed:clientSeed:nonce</code> → first 8 hex chars ÷ 2³². If result &lt; 0.485, apple hit; otherwise face hit. Reveal server seed after each round to audit shots.</p>
+        </div>
+      </div>
+      <button type="button" class="btn-modal" id="btnCloseRtp">Got it</button>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
     <div class="modal">
@@ -817,6 +936,7 @@
       const OVERLAY_MS = 1400;
       const FACE_CENSOR_MS = 1280;
       const HELP_KEY = "drunkenArcherHelpSeen";
+      const CLIENT_SEED_KEY = "drunkenPirateClientSeed";
 
       const TAVERN_NAMES = [
         "The Drunken Duck",
@@ -839,6 +959,12 @@
       const btnCash = document.getElementById("btnCash");
       const toastEl = document.getElementById("toast");
       const helpModal = document.getElementById("helpModal");
+      const rtpModal = document.getElementById("rtpModal");
+      const rtpServerHash = document.getElementById("rtpServerHash");
+      const rtpServerSeed = document.getElementById("rtpServerSeed");
+      const rtpNonce = document.getElementById("rtpNonce");
+      const rtpLastRoll = document.getElementById("rtpLastRoll");
+      const clientSeedInput = document.getElementById("clientSeedInput");
       const resultBanner = document.getElementById("resultBanner");
       const resultTitle = document.getElementById("resultTitle");
       const resultSub = document.getElementById("resultSub");
@@ -1204,6 +1330,76 @@
         }
       }
 
+      const fairness = {
+        serverSeed: "",
+        serverSeedHash: "",
+        clientSeed: "",
+        nonce: 0,
+        revealed: false,
+        lastRoll: null,
+        lastOutcome: null
+      };
+
+      function randomSeed() {
+        const arr = new Uint8Array(16);
+        crypto.getRandomValues(arr);
+        return Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
+      }
+
+      async function sha256Hex(text) {
+        const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+        return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, "0")).join("");
+      }
+
+      function loadClientSeed() {
+        try {
+          const stored = localStorage.getItem(CLIENT_SEED_KEY);
+          if (stored) return stored;
+        } catch (e) { /* ignore */ }
+        return randomSeed();
+      }
+
+      function saveClientSeed() {
+        try {
+          localStorage.setItem(CLIENT_SEED_KEY, fairness.clientSeed);
+        } catch (e) { /* ignore */ }
+      }
+
+      function updateFairnessUi() {
+        rtpServerHash.textContent = fairness.serverSeedHash || "—";
+        rtpServerSeed.textContent = fairness.revealed
+          ? (fairness.serverSeed || "—")
+          : "Hidden until round ends";
+        clientSeedInput.value = fairness.clientSeed || "";
+        rtpNonce.textContent = String(fairness.nonce);
+        if (fairness.lastRoll == null) {
+          rtpLastRoll.textContent = "—";
+        } else {
+          const label = fairness.lastOutcome === "hit" ? "apple hit" : "face hit";
+          rtpLastRoll.textContent = fairness.lastRoll.toFixed(8) + " → " + label;
+        }
+      }
+
+      async function commitServerSeed() {
+        fairness.serverSeed = randomSeed();
+        fairness.serverSeedHash = await sha256Hex(fairness.serverSeed);
+        fairness.nonce = 0;
+        fairness.revealed = false;
+        fairness.lastRoll = null;
+        fairness.lastOutcome = null;
+        updateFairnessUi();
+      }
+
+      function revealServerSeed() {
+        fairness.revealed = true;
+        updateFairnessUi();
+      }
+
+      async function fairRollValue(serverSeed, clientSeed, nonce) {
+        const digest = await sha256Hex(serverSeed + ":" + clientSeed + ":" + nonce);
+        return parseInt(digest.slice(0, 8), 16) / 0x100000000;
+      }
+
       const state = {
         balance: START_BALANCE,
         bet: 1,
@@ -1315,6 +1511,15 @@
         ensureMusicPlaying();
       }
 
+      function openRtp() {
+        updateFairnessUi();
+        rtpModal.classList.add("open");
+      }
+
+      function closeRtp() {
+        rtpModal.classList.remove("open");
+      }
+
       function pulseBalance() {
         balanceDisplay.classList.add("pulse");
         setTimeout(() => balanceDisplay.classList.remove("pulse"), 220);
@@ -1357,6 +1562,7 @@
       }
 
       function resetRound() {
+        revealServerSeed();
         state.roundActive = false;
         state.roundBet = 0;
         state.hits = 0;
@@ -1380,8 +1586,13 @@
         resetRound();
       }
 
-      function rollOutcome() {
-        return Math.random() < HIT_PROB ? "hit" : "hitPerson";
+      async function rollOutcome() {
+        fairness.nonce += 1;
+        const roll = await fairRollValue(fairness.serverSeed, fairness.clientSeed, fairness.nonce);
+        fairness.lastRoll = roll;
+        fairness.lastOutcome = roll < HIT_PROB ? "hit" : "hitPerson";
+        updateFairnessUi();
+        return fairness.lastOutcome;
       }
 
       function spawnParticles(x, y, count, colors) {
@@ -2050,7 +2261,7 @@
         canvas.style.height = rect.height + "px";
       }
 
-      function shoot() {
+      async function shoot() {
         if (state.animating) return;
         unlockSfx();
         ensureBgVideoPlaying();
@@ -2060,6 +2271,7 @@
             showToast("Not enough balance");
             return;
           }
+          if (fairness.revealed) await commitServerSeed();
           state.roundBet = state.bet;
           state.balance = Math.round((state.balance - state.roundBet) * 100) / 100;
           state.roundActive = true;
@@ -2067,7 +2279,7 @@
           state.multiplier = 1;
           pulseBalance();
         }
-        startFlight(rollOutcome());
+        startFlight(await rollOutcome());
       }
 
       function cashOut() {
@@ -2122,12 +2334,23 @@
       btnCash.addEventListener("click", cashOut);
       document.getElementById("btnHelp").addEventListener("click", openHelp);
       document.getElementById("btnCloseHelp").addEventListener("click", closeHelp);
+      document.getElementById("btnRtp").addEventListener("click", openRtp);
+      document.getElementById("btnCloseRtp").addEventListener("click", closeRtp);
       helpModal.addEventListener("click", (e) => {
         if (e.target === helpModal) closeHelp();
       });
+      rtpModal.addEventListener("click", (e) => {
+        if (e.target === rtpModal) closeRtp();
+      });
+      clientSeedInput.addEventListener("change", () => {
+        fairness.clientSeed = clientSeedInput.value.trim() || randomSeed();
+        clientSeedInput.value = fairness.clientSeed;
+        saveClientSeed();
+        updateFairnessUi();
+      });
 
       document.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && !helpModal.classList.contains("open")) {
+        if (e.code === "Space" && !helpModal.classList.contains("open") && !rtpModal.classList.contains("open")) {
           e.preventDefault();
           shoot();
         }
@@ -2146,6 +2369,8 @@
 
       resizeCanvas();
       updateUI();
+      fairness.clientSeed = loadClientSeed();
+      commitServerSeed().then(updateFairnessUi).catch(() => {});
       try {
         if (!localStorage.getItem(HELP_KEY)) openHelp();
       } catch (e) {
