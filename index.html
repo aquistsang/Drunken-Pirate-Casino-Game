@@ -162,38 +162,44 @@
     .audio-controls {
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex: 0 0 auto;
+      gap: 8px;
+      flex: 1 1 auto;
     }
 
-    .btn-mute {
+    .btn-audio-toggle {
       flex: 0 0 auto;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(232, 197, 71, 0.15);
-      border: 1px solid rgba(232, 197, 71, 0.45);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 36px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(232, 197, 71, 0.12);
+      border: 1px solid rgba(232, 197, 71, 0.4);
       color: var(--gold);
-      font-size: 0.95rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       line-height: 1;
-      box-shadow: 0 0 10px rgba(232, 197, 71, 0.15);
+      box-shadow: 0 0 10px rgba(232, 197, 71, 0.12);
+      white-space: nowrap;
     }
 
-    .btn-mute:hover {
-      background: rgba(232, 197, 71, 0.3);
-      transform: scale(1.06);
+    .btn-audio-toggle:hover {
+      background: rgba(232, 197, 71, 0.28);
     }
 
-    .btn-mute.is-muted {
-      opacity: 0.7;
-      color: rgba(243, 230, 208, 0.65);
+    .btn-audio-toggle.is-muted {
+      opacity: 0.65;
+      color: rgba(243, 230, 208, 0.7);
+      border-color: rgba(150, 140, 130, 0.45);
+      background: rgba(40, 28, 20, 0.55);
     }
 
-    #volSlider {
-      width: 88px;
-      height: 24px;
-      accent-color: var(--gold);
-      cursor: pointer;
+    .btn-audio-toggle .ico {
+      font-size: 0.9rem;
+      line-height: 1;
     }
 
     .panel {
@@ -454,17 +460,9 @@
     .controls-footer {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 8px;
       min-height: 36px;
-    }
-
-    .hint {
-      flex: 1 1 auto;
-      text-align: right;
-      font-size: 0.62rem;
-      color: rgba(243, 230, 208, 0.4);
-      line-height: 1.3;
     }
 
     .toast {
@@ -632,10 +630,10 @@
         justify-content: flex-start;
       }
 
-      .hint { display: none; }
-
-      #volSlider {
-        width: 96px;
+      .btn-audio-toggle {
+        min-height: 34px;
+        padding: 5px 9px;
+        font-size: 0.68rem;
       }
 
       .panel {
@@ -771,10 +769,15 @@
       </div>
       <div class="controls-footer">
         <div class="audio-controls">
-          <button type="button" class="btn-mute" id="btnMute" aria-label="Mute sound" title="Mute">🔊</button>
-          <input type="range" id="volSlider" min="0" max="100" value="80" step="1" aria-label="Volume" />
+          <button type="button" class="btn-audio-toggle" id="btnMuteMusic" aria-pressed="false" title="Mute music">
+            <span class="ico" id="icoMusic">🎵</span>
+            <span id="labelMusic">Music</span>
+          </button>
+          <button type="button" class="btn-audio-toggle" id="btnMuteSound" aria-pressed="false" title="Mute sound">
+            <span class="ico" id="icoSound">🔊</span>
+            <span id="labelSound">Sound</span>
+          </button>
         </div>
-        <p class="hint">Spacebar to FIRE · Cash out anytime</p>
       </div>
     </div>
   </div>
@@ -812,7 +815,7 @@
       const FLIGHT_MS = 160;
       const SETTLE_MS = 500;
       const OVERLAY_MS = 1400;
-      const FACE_CENSOR_MS = 1000;
+      const FACE_CENSOR_MS = 1280;
       const HELP_KEY = "drunkenArcherHelpSeen";
 
       const TAVERN_NAMES = [
@@ -850,6 +853,14 @@
       const appleImg = new Image();
       const appleHitImg = new Image();
       const bgImg = new Image();
+      const bgVideo = document.createElement("video");
+      bgVideo.muted = true;
+      bgVideo.defaultMuted = true;
+      bgVideo.loop = true;
+      bgVideo.playsInline = true;
+      bgVideo.setAttribute("playsinline", "");
+      bgVideo.setAttribute("webkit-playsinline", "");
+      bgVideo.preload = "auto";
       let charSprite = null;
       let charBlinkSprite = null;
       let charHitSprite = null;
@@ -860,6 +871,7 @@
       let appleSprite = null;
       let appleHitSprite = null;
       let bgSprite = null;
+      let bgVideoReady = false;
       let assetsReady = { character: false, characterBlink: false, characterHit: false, characterLose: false, characterLoseBandage: false, bow: false, muzzle: false, apple: false, appleHit: false, bg: false };
       // Tavern background already includes the character — don't draw character.png on top
       const SCENE_HAS_CHARACTER = false;
@@ -998,6 +1010,13 @@
         assetsReady.bg = true;
       };
       bgImg.onerror = () => { assetsReady.bg = false; };
+      bgVideo.addEventListener("loadeddata", () => {
+        bgVideoReady = true;
+        assetsReady.bg = true;
+        const p = bgVideo.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      });
+      bgVideo.addEventListener("error", () => { bgVideoReady = false; });
       characterImg.src = "character.png";
       characterBlinkImg.src = "character-blink.png";
       characterHitImg.src = "character-hit.png";
@@ -1008,70 +1027,84 @@
       appleImg.src = "apple.png";
       appleHitImg.src = "apple-hit.png";
       bgImg.src = "background.png";
+      bgVideo.src = "background.mp4";
+      bgVideo.load();
 
       const sfxShot = new Audio("pistol-shot.mp3");
       const sfxAppleHit = new Audio("apple-hit.mp3");
-      const sfxFaceHit = new Audio("exhale.wav");
+      const sfxFaceHit = new Audio("ow.mp3");
       const sfxCashOut = new Audio("cash-out.mp3");
-      [sfxShot, sfxAppleHit, sfxFaceHit, sfxCashOut].forEach((a) => {
-        a.preload = "auto";
+      const bgMusic = new Audio("ambient.mp3");
+      bgMusic.loop = true;
+      bgMusic.preload = "auto";
+      const AMBIENT_VOL = 0.18;
+      const SFX_VOL = 0.85;
+      [sfxShot, sfxAppleHit, sfxFaceHit, sfxCashOut, bgMusic].forEach((a) => {
         a.load();
       });
 
-      const VOL_KEY = "drunkenPirateVolume";
-      const MUTE_KEY = "drunkenPirateMuted";
-      const btnMute = document.getElementById("btnMute");
-      const volSlider = document.getElementById("volSlider");
+      const MUSIC_MUTE_KEY = "drunkenPirateMusicMuted";
+      const SOUND_MUTE_KEY = "drunkenPirateSoundMuted";
+      const btnMuteMusic = document.getElementById("btnMuteMusic");
+      const btnMuteSound = document.getElementById("btnMuteSound");
+      const icoMusic = document.getElementById("icoMusic");
+      const icoSound = document.getElementById("icoSound");
+      const labelMusic = document.getElementById("labelMusic");
+      const labelSound = document.getElementById("labelSound");
 
-      function loadAudioPrefs() {
-        let vol = 0.8;
-        let muted = false;
+      function loadMutePref(key) {
         try {
-          const storedVol = localStorage.getItem(VOL_KEY);
-          const storedMute = localStorage.getItem(MUTE_KEY);
-          if (storedVol != null) vol = Math.max(0, Math.min(1, parseFloat(storedVol) || 0));
-          if (storedMute != null) muted = storedMute === "1";
-        } catch (e) {}
-        return { vol, muted };
+          return localStorage.getItem(key) === "1";
+        } catch (e) {
+          return false;
+        }
       }
 
-      const audioPrefs = loadAudioPrefs();
-      let masterVolume = audioPrefs.vol;
-      let soundMuted = audioPrefs.muted;
-      volSlider.value = String(Math.round(masterVolume * 100));
+      let musicMuted = loadMutePref(MUSIC_MUTE_KEY);
+      let soundMuted = loadMutePref(SOUND_MUTE_KEY);
+      let musicStarted = false;
 
-      // Web Audio keeps lose-exhale audible even after a short delay (HTMLAudio play()
+      // Web Audio keeps lose "ow" audible even after a short delay (HTMLAudio play()
       // from setTimeout is often blocked once the click gesture expires).
       let sfxCtx = null;
-      let exhaleBuffer = null;
+      let loseHitBuffer = null;
       let masterGain = null;
+      // ow.mp3 has ~140ms leading silence
+      const LOSE_HIT_OFFSET = 0.14;
 
-      function effectiveVolume() {
-        return soundMuted ? 0 : masterVolume;
+      function effectiveSfxVolume() {
+        return soundMuted ? 0 : SFX_VOL;
       }
 
       function syncMuteUi() {
-        btnMute.textContent = soundMuted || masterVolume <= 0.001 ? "🔇" : "🔊";
-        btnMute.classList.toggle("is-muted", soundMuted || masterVolume <= 0.001);
-        btnMute.setAttribute("aria-label", soundMuted ? "Unmute sound" : "Mute sound");
-        btnMute.title = soundMuted ? "Unmute" : "Mute";
-        volSlider.disabled = soundMuted;
+        btnMuteMusic.classList.toggle("is-muted", musicMuted);
+        btnMuteMusic.setAttribute("aria-pressed", musicMuted ? "true" : "false");
+        btnMuteMusic.title = musicMuted ? "Unmute music" : "Mute music";
+        icoMusic.textContent = musicMuted ? "🔇" : "🎵";
+        labelMusic.textContent = musicMuted ? "Music off" : "Music";
+
+        btnMuteSound.classList.toggle("is-muted", soundMuted);
+        btnMuteSound.setAttribute("aria-pressed", soundMuted ? "true" : "false");
+        btnMuteSound.title = soundMuted ? "Unmute sound" : "Mute sound";
+        icoSound.textContent = soundMuted ? "🔇" : "🔊";
+        labelSound.textContent = soundMuted ? "Sound off" : "Sound";
       }
 
-      function applyVolume() {
-        const v = effectiveVolume();
-        sfxShot.volume = v;
-        sfxAppleHit.volume = v;
-        sfxFaceHit.volume = Math.min(1, v);
-        sfxCashOut.volume = v;
-        if (masterGain) masterGain.gain.value = v * 1.8;
+      function applyAudioLevels() {
+        const sfxV = effectiveSfxVolume();
+        sfxShot.volume = sfxV;
+        sfxAppleHit.volume = sfxV;
+        sfxFaceHit.volume = Math.min(1, sfxV);
+        sfxCashOut.volume = sfxV;
+        if (masterGain) masterGain.gain.value = sfxV * 1.8;
+        bgMusic.volume = musicMuted ? 0 : AMBIENT_VOL;
         syncMuteUi();
       }
 
       function persistAudioPrefs() {
         try {
-          localStorage.setItem(VOL_KEY, String(masterVolume));
-          localStorage.setItem(MUTE_KEY, soundMuted ? "1" : "0");
+          localStorage.setItem(MUSIC_MUTE_KEY, musicMuted ? "1" : "0");
+          localStorage.setItem(SOUND_MUTE_KEY, soundMuted ? "1" : "0");
         } catch (e) {}
       }
 
@@ -1079,66 +1112,88 @@
         if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (!masterGain) {
           masterGain = sfxCtx.createGain();
-          masterGain.gain.value = effectiveVolume() * 1.8;
+          masterGain.gain.value = effectiveSfxVolume() * 1.8;
           masterGain.connect(sfxCtx.destination);
         }
         return sfxCtx;
       }
+
       function unlockSfx() {
         const ctx = getSfxCtx();
         if (ctx.state === "suspended") ctx.resume();
       }
-      fetch("exhale.wav")
+
+      function ensureMusicPlaying() {
+        if (musicMuted) return;
+        unlockSfx();
+        ensureBgVideoPlaying();
+        bgMusic.volume = AMBIENT_VOL;
+        if (!musicStarted || bgMusic.paused) {
+          const p = bgMusic.play();
+          if (p && typeof p.catch === "function") {
+            p.then(() => { musicStarted = true; }).catch(() => {});
+          } else {
+            musicStarted = true;
+          }
+        }
+      }
+
+      fetch("ow.mp3")
         .then((r) => r.arrayBuffer())
         .then((ab) => getSfxCtx().decodeAudioData(ab))
-        .then((buf) => { exhaleBuffer = buf; })
+        .then((buf) => { loseHitBuffer = buf; })
         .catch(() => {});
 
-      applyVolume();
+      applyAudioLevels();
 
-      btnMute.addEventListener("click", () => {
-        soundMuted = !soundMuted;
+      btnMuteMusic.addEventListener("click", () => {
+        musicMuted = !musicMuted;
         persistAudioPrefs();
-        applyVolume();
-        unlockSfx();
+        applyAudioLevels();
+        if (musicMuted) {
+          bgMusic.pause();
+        } else {
+          ensureMusicPlaying();
+        }
       });
 
-      volSlider.addEventListener("input", () => {
-        masterVolume = Math.max(0, Math.min(1, (parseInt(volSlider.value, 10) || 0) / 100));
-        if (masterVolume > 0 && soundMuted) soundMuted = false;
+      btnMuteSound.addEventListener("click", () => {
+        soundMuted = !soundMuted;
         persistAudioPrefs();
-        applyVolume();
+        applyAudioLevels();
+        unlockSfx();
       });
 
       function playSfx(audio) {
         try {
-          if (effectiveVolume() <= 0) return;
+          if (effectiveSfxVolume() <= 0) return;
           unlockSfx();
+          ensureMusicPlaying();
           audio.pause();
           audio.currentTime = 0;
-          audio.volume = effectiveVolume();
+          audio.volume = effectiveSfxVolume();
           const p = audio.play();
           if (p && typeof p.catch === "function") p.catch(() => {});
         } catch (e) { /* ignore autoplay blocks */ }
       }
 
       function playLoseExhale() {
-        if (effectiveVolume() <= 0) return;
+        if (effectiveSfxVolume() <= 0) return;
         unlockSfx();
         const ctx = getSfxCtx();
         const start = () => {
-          if (exhaleBuffer) {
+          if (loseHitBuffer) {
             const src = ctx.createBufferSource();
-            src.buffer = exhaleBuffer;
+            src.buffer = loseHitBuffer;
             src.connect(masterGain || ctx.destination);
-            // Right after the audible bang (~170ms into the gunshot file)
-            src.start(ctx.currentTime + 0.17);
+            // After the bang (~170ms), skip ow file silence
+            src.start(ctx.currentTime + 0.17, LOSE_HIT_OFFSET);
             return;
           }
           // Fallback: HTMLAudio in the same gesture stack
           try {
-            sfxFaceHit.volume = effectiveVolume();
-            sfxFaceHit.currentTime = 0;
+            sfxFaceHit.volume = effectiveSfxVolume();
+            sfxFaceHit.currentTime = LOSE_HIT_OFFSET;
             sfxFaceHit.play().catch(() => {});
           } catch (e) {}
         };
@@ -1257,6 +1312,7 @@
       function closeHelp() {
         helpModal.classList.remove("open");
         try { localStorage.setItem(HELP_KEY, "1"); } catch (e) { /* ignore */ }
+        ensureMusicPlaying();
       }
 
       function pulseBalance() {
@@ -1364,8 +1420,29 @@
         }
       }
 
+      function ensureBgVideoPlaying() {
+        if (!bgVideoReady && bgVideo.readyState < 2) return;
+        if (bgVideo.paused) {
+          const p = bgVideo.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        }
+      }
+
       function drawBackground(layout) {
         const { w, h } = layout;
+        ensureBgVideoPlaying();
+        const useVideo = bgVideoReady && bgVideo.readyState >= 2;
+        if (useVideo) {
+          const iw = bgVideo.videoWidth || 1;
+          const ih = bgVideo.videoHeight || 1;
+          const scale = Math.max(w / iw, h / ih);
+          const dw = iw * scale;
+          const dh = ih * scale;
+          const dx = (w - dw) / 2;
+          const dy = (h - dh) / 2;
+          ctx.drawImage(bgVideo, dx, dy, dw, dh);
+          return;
+        }
         const sprite = bgSprite || (assetsReady.bg ? bgImg : null);
         if (sprite) {
           const iw = sprite.naturalWidth || sprite.width;
@@ -1976,6 +2053,8 @@
       function shoot() {
         if (state.animating) return;
         unlockSfx();
+        ensureBgVideoPlaying();
+        ensureMusicPlaying();
         if (!state.roundActive) {
           if (state.balance < state.bet - 1e-9) {
             showToast("Not enough balance");
