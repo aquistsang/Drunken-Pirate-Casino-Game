@@ -1247,7 +1247,9 @@
       }
 
       function getPistolPose(layout) {
-        const bowW = layout.w * 0.88;
+        // Slightly smaller on phones so it doesn't dominate the scene
+        const narrow = layout.w < 440 || (typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches);
+        const bowW = layout.w * (narrow ? 0.72 : 0.88);
         const sprite = bowSprite || bowImg;
         const aspect = sprite
           ? (sprite.naturalWidth || sprite.width) / Math.max(sprite.naturalHeight || sprite.height || 1, 1)
