@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Drunken Archer — Boyz Casino</title>
+  <style>
+    :root {
+      --wood-deep: #1a0e08;
+      --wood: #2a1a10;
+      --gold: #e8c547;
+      --gold-bright: #ffe08a;
+      --fire: #ff6b2c;
+      --fire-soft: #ff9a4a;
+      --cream: #f3e6d0;
+      --mead: #c9a24a;
+      --green: #2e7d4f;
+      --red: #b8322a;
+      --glass: rgba(26, 14, 8, 0.78);
+      --border: rgba(232, 197, 71, 0.28);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      color: var(--cream);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse 120% 55% at 50% 108%, rgba(255, 107, 44, 0.38) 0%, rgba(255, 154, 74, 0.14) 28%, transparent 58%),
+        radial-gradient(ellipse 70% 40% at 15% 90%, rgba(255, 140, 40, 0.12), transparent 50%),
+        radial-gradient(ellipse 70% 40% at 85% 90%, rgba(255, 100, 30, 0.1), transparent 50%),
+        linear-gradient(180deg, #0e0805 0%, var(--wood-deep) 35%, var(--wood) 70%, #24160e 100%);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+      background:
+        repeating-linear-gradient(90deg, transparent 0px, transparent 46px, rgba(0,0,0,0.35) 46px, rgba(0,0,0,0.35) 48px),
+        repeating-linear-gradient(0deg, rgba(255,200,120,0.03) 0px, transparent 2px, transparent 28px, rgba(0,0,0,0.08) 29px);
+    }
+
+    body.flash-red::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(180, 30, 20, 0.42);
+      pointer-events: none;
+      z-index: 50;
+      animation: redFlash 0.5s ease-out forwards;
+    }
+
+    @keyframes redFlash {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .pub-roof {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      height: clamp(18px, 3.2dvh, 36px);
+      background:
+        linear-gradient(180deg, transparent 40%, rgba(20, 10, 5, 0.85) 40%),
+        radial-gradient(ellipse 100% 100% at 50% 100%, #1a1008 0%, transparent 70%);
+      clip-path: polygon(0 100%, 0 55%, 8% 35%, 50% 0, 92% 35%, 100% 55%, 100% 100%);
+      border-bottom: 1px solid rgba(232, 197, 71, 0.2);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 4px 10px 8px;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    header.brand {
+      text-align: center;
+      flex: 0 0 auto;
+      padding: 2px 36px 4px;
+      border-top: 1px solid rgba(232, 197, 71, 0.25);
+      border-bottom: 1px solid rgba(232, 197, 71, 0.25);
+      background: linear-gradient(90deg, transparent, rgba(232, 197, 71, 0.06), transparent);
+      position: relative;
+    }
+
+    .brand-eyebrow {
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--mead);
+    }
+
+    .brand h1 {
+      font-size: clamp(1.15rem, 2.8dvh + 0.4rem, 1.85rem);
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow:
+        0 0 22px rgba(255, 180, 40, 0.55),
+        0 0 40px rgba(255, 107, 44, 0.25),
+        0 2px 0 #8a6010,
+        0 4px 12px rgba(0, 0, 0, 0.6);
+      animation: titleGlow 2.8s ease-in-out infinite;
+      line-height: 1.15;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.12); }
+    }
+
+    .btn-help {
+      position: absolute;
+      top: 50%;
+      right: 2px;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(232, 197, 71, 0.15);
+      border: 1px solid rgba(232, 197, 71, 0.45);
+      color: var(--gold);
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 0 12px rgba(232, 197, 71, 0.2);
+    }
+
+    .btn-help:hover {
+      background: rgba(232, 197, 71, 0.3);
+      transform: translateY(-50%) scale(1.06);
+    }
+
+    .panel {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 220, 150, 0.06);
+      padding: 8px 10px;
+      flex: 0 0 auto;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat { text-align: center; }
+    .stat.balance-stat { text-align: left; }
+
+    .stat .label {
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(243, 230, 208, 0.5);
+      margin-bottom: 2px;
+    }
+
+    .stat .value {
+      font-size: clamp(0.95rem, 2.2dvh, 1.15rem);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.2;
+    }
+
+    .stat .value.balance { color: var(--gold); transition: transform 0.2s; }
+    .stat .value.balance.pulse { transform: scale(1.08); color: var(--gold-bright); }
+    .stat .value.mult { color: var(--fire-soft); }
+    .stat .value.potential { color: #6dca8a; }
+
+    .season-wrap { margin-top: 6px; }
+    .season-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(243, 230, 208, 0.5);
+      margin-bottom: 3px;
+    }
+
+    .season-bar {
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(232, 197, 71, 0.18);
+      overflow: hidden;
+    }
+
+    .season-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--fire), var(--gold), var(--gold-bright));
+      box-shadow: 0 0 12px rgba(255, 107, 44, 0.45);
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .scene-slot {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .scene-stage {
+      position: relative;
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: min(52dvh, 420px);
+      max-height: 100%;
+      aspect-ratio: 5 / 4;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 3px solid #3a2618;
+      box-shadow:
+        0 0 0 2px rgba(232, 197, 71, 0.22),
+        0 10px 28px rgba(0, 0, 0, 0.5),
+        inset 0 0 30px rgba(0, 0, 0, 0.35);
+      background: #1a1008;
+    }
+
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    .result-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.75);
+      transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 5;
+      background: radial-gradient(circle, rgba(10, 6, 4, 0.7) 0%, transparent 70%);
+    }
+
+    .result-overlay.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .result-card {
+      text-align: center;
+      padding: 16px 24px;
+      border-radius: 16px;
+      background: rgba(20, 10, 5, 0.94);
+      border: 1px solid rgba(232, 197, 71, 0.5);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+      min-width: 180px;
+    }
+
+    .result-card.hit { border-color: rgba(109, 202, 138, 0.6); }
+    .result-card.miss { border-color: rgba(184, 50, 42, 0.7); }
+    .result-card.cash { border-color: rgba(109, 202, 138, 0.8); box-shadow: 0 0 28px rgba(109, 202, 138, 0.25); }
+
+    .result-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .result-title.hit { color: var(--gold-bright); }
+    .result-title.miss { color: #ff6666; }
+    .result-title.cash { color: #6dca8a; }
+
+    .result-sub {
+      margin-top: 4px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--fire-soft);
+    }
+
+    .controls { display: grid; gap: 8px; }
+
+    .bet-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(243, 230, 208, 0.5);
+      margin-bottom: 4px;
+    }
+
+    .bet-row {
+      display: flex;
+      gap: 6px;
+      align-items: stretch;
+    }
+
+    .bet-input-wrap {
+      flex: 1 1 auto;
+      min-width: 0;
+      position: relative;
+    }
+
+    .bet-input-wrap::before {
+      content: "$";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--mead);
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    #betInput {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 10px 10px 24px;
+      border-radius: 9px;
+      border: 1px solid rgba(232, 197, 71, 0.28);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--cream);
+      font-size: 1rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      outline: none;
+    }
+
+    #betInput:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(232, 197, 71, 0.15);
+    }
+
+    .quick-bets { display: flex; gap: 5px; flex: 0 0 auto; }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: transform 0.15s ease, background 0.2s, box-shadow 0.2s, opacity 0.2s;
+    }
+
+    button:active:not(:disabled) { transform: scale(0.96); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-quick {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(90, 58, 36, 0.75);
+      border: 1px solid rgba(232, 197, 71, 0.22);
+      color: var(--cream);
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .btn-quick:hover:not(:disabled) {
+      background: rgba(232, 197, 71, 0.22);
+      border-color: var(--gold);
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-shoot {
+      min-height: 48px;
+      padding: 12px;
+      border-radius: 11px;
+      background: linear-gradient(180deg, #ff8a3a 0%, #d94a1a 55%, #a83210 100%);
+      border: 2px solid rgba(255, 220, 150, 0.35);
+      color: #fff8e8;
+      font-size: clamp(0.95rem, 2.2dvh, 1.1rem);
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 0 #6a1e08, 0 8px 18px rgba(255, 80, 20, 0.3);
+    }
+
+    .btn-shoot:hover:not(:disabled) { filter: brightness(1.08); }
+
+    .btn-cash {
+      min-height: 48px;
+      padding: 12px;
+      border-radius: 11px;
+      background: linear-gradient(180deg, #4caf6a 0%, #2e7d4f 55%, #1f5a38 100%);
+      border: 2px solid rgba(160, 230, 180, 0.35);
+      color: #e8fff0;
+      font-size: clamp(0.95rem, 2.2dvh, 1.1rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 0 #143d28, 0 8px 18px rgba(46, 125, 79, 0.3);
+    }
+
+    .btn-cash:hover:not(:disabled) { filter: brightness(1.08); }
+
+    .hint {
+      text-align: center;
+      font-size: 0.62rem;
+      color: rgba(243, 230, 208, 0.4);
+    }
+
+    .history-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(243, 230, 208, 0.5);
+      margin-bottom: 4px;
+    }
+
+    .history {
+      display: flex;
+      gap: 4px;
+      min-height: 28px;
+      overflow: hidden;
+    }
+
+    .chip {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 5px 2px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-align: center;
+      animation: chipIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chip.high {
+      background: linear-gradient(135deg, #e8c547, #ff8a3a);
+      color: #1a0e08;
+    }
+
+    .chip.mid {
+      background: rgba(46, 125, 79, 0.4);
+      border: 1px solid rgba(109, 202, 138, 0.5);
+      color: #8fd9a8;
+    }
+
+    .chip.low {
+      background: rgba(120, 110, 100, 0.25);
+      border: 1px solid rgba(150, 140, 130, 0.3);
+      color: #b0a89e;
+    }
+
+    @keyframes chipIn {
+      from { opacity: 0; transform: scale(0.6) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(20, 10, 5, 0.95);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      transition: opacity 0.3s, transform 0.3s;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(8, 4, 2, 0.78);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: min(400px, 100%);
+      max-height: min(85dvh, 560px);
+      overflow-y: auto;
+      background: linear-gradient(180deg, #2a1a10 0%, #1a0e08 100%);
+      border: 1px solid rgba(232, 197, 71, 0.45);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      padding: 16px;
+      transform: translateY(12px) scale(0.96);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+
+    .modal h2 {
+      text-align: center;
+      font-size: 1.05rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      margin-bottom: 2px;
+    }
+
+    .modal .sub {
+      text-align: center;
+      font-size: 0.7rem;
+      color: rgba(243, 230, 208, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .modal ul {
+      list-style: none;
+      display: grid;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .modal li {
+      padding: 8px 10px;
+      border-radius: 9px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(232, 197, 71, 0.15);
+      font-size: 0.8rem;
+      line-height: 1.35;
+      color: rgba(243, 230, 208, 0.88);
+    }
+
+    .modal li strong {
+      color: var(--gold);
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .btn-modal {
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #ff8a3a, #a83210);
+      border: 2px solid rgba(255, 220, 150, 0.3);
+      color: #fff;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 480px) {
+      .action-row {
+        grid-template-columns: 1fr;
+      }
+
+      .bet-row {
+        flex-wrap: wrap;
+      }
+
+      .quick-bets {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .btn-quick {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="pub-roof"></div>
+
+  <div class="wrap">
+    <header class="brand">
+      <div class="brand-eyebrow" id="tavernName">The Drunken Duck</div>
+      <h1>Drunken Archer</h1>
+      <button type="button" class="btn-help" id="btnHelp" aria-label="How to play">?</button>
+    </header>
+
+    <div class="panel">
+      <div class="stats-row">
+        <div class="stat balance-stat">
+          <div class="label">Balance</div>
+          <div class="value balance" id="balanceDisplay">$1,000.00</div>
+        </div>
+        <div class="stat">
+          <div class="label">Multiplier</div>
+          <div class="value mult" id="multDisplay">1.00×</div>
+        </div>
+        <div class="stat">
+          <div class="label">Potential Win</div>
+          <div class="value potential" id="potentialDisplay">$0.00</div>
+        </div>
+      </div>
+      <div class="season-wrap">
+        <div class="season-label">
+          <span>Season</span>
+          <span id="seasonPct">0.0%</span>
+        </div>
+        <div class="season-bar">
+          <div class="season-fill" id="seasonFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-slot">
+      <div class="scene-stage">
+        <canvas id="gameCanvas" aria-label="Archery scene"></canvas>
+        <div class="result-overlay" id="resultOverlay">
+          <div class="result-card" id="resultCard">
+            <div class="result-title" id="resultTitle">HIT!</div>
+            <div class="result-sub" id="resultSub">2.00×</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel controls">
+      <div class="bet-label">Bet amount</div>
+      <div class="bet-row">
+        <div class="bet-input-wrap">
+          <input type="number" id="betInput" min="0.01" max="100" step="0.01" value="1.00" inputmode="decimal" />
+        </div>
+        <div class="quick-bets">
+          <button type="button" class="btn-quick" data-bet="10">10</button>
+          <button type="button" class="btn-quick" data-bet="100">100</button>
+          <button type="button" class="btn-quick" id="btnDouble">2×</button>
+        </div>
+      </div>
+      <div class="action-row">
+        <button type="button" class="btn-shoot" id="btnShoot">🎯 Shoot</button>
+        <button type="button" class="btn-cash" id="btnCash" disabled>💰 Cash Out</button>
+      </div>
+      <p class="hint">Spacebar to shoot · Cash out anytime — even while the arrow flies!</p>
+    </div>
+
+    <div class="panel">
+      <div class="history-label">Last rounds</div>
+      <div class="history" id="history"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal-backdrop" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="modal">
+      <h2 id="helpTitle">🍺 Drunken Archer – How to Play</h2>
+      <p class="sub">97% RTP · 3% house edge</p>
+      <ul>
+        <li><strong>You are the archer!</strong> Place your bet ($0.01–$100).</li>
+        <li><strong>Shoot</strong> Fire an arrow from your hand toward the apple.</li>
+        <li><strong>Hit the apple</strong> Multiplier doubles! 1× → 2× → 4× → 8× …</li>
+        <li><strong>Miss the apple</strong> The arrow may fly past <em>or</em> hit the person — either way you lose your bet.</li>
+        <li><strong>Cash out</strong> Keep winnings (bet × multiplier) anytime — even while the arrow is in flight!</li>
+        <li><strong>Fair 97% RTP</strong> A slight 3% house edge keeps the tavern running!</li>
+        <li><strong>Season</strong> Each round fills the Season bar. When full, the tavern gets a new name!</li>
+      </ul>
+      <button type="button" class="btn-modal" id="btnCloseHelp">Got it — Shoot!</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // 97% RTP: cash out after 1 hit → E[payout] = 2 × 0.485 = 0.97
+      const HIT_PROB = 0.485;
+      const MISS_FLY_PROB = 0.30;
+      const MISS_PERSON_PROB = 0.215;
+      const MIN_BET = 0.01;
+      const MAX_BET = 100;
+      const START_BALANCE = 1000;
+      const SEASON_STEP = 1.2;
+      const PULL_MS = 180;
+      const SNAP_MS = 120;
+      const FLIGHT_MS = 680;
+      const SETTLE_MS = 1000;
+      const OVERLAY_MS = 1900;
+      const HELP_KEY = "drunkenArcherHelpSeen";
+
+      const TAVERN_NAMES = [
+        "The Drunken Duck",
+        "The Wobbly Arrow",
+        "Ye Olde Bullseye",
+        "The Tipsy Target",
+        "The Merry Bowman",
+        "The Golden Quiver",
+        "The Rusty Crossbow",
+        "The Frothy Flagon"
+      ];
+
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const balanceDisplay = document.getElementById("balanceDisplay");
+      const multDisplay = document.getElementById("multDisplay");
+      const potentialDisplay = document.getElementById("potentialDisplay");
+      const seasonFill = document.getElementById("seasonFill");
+      const seasonPct = document.getElementById("seasonPct");
+      const tavernName = document.getElementById("tavernName");
+      const betInput = document.getElementById("betInput");
+      const btnShoot = document.getElementById("btnShoot");
+      const btnCash = document.getElementById("btnCash");
+      const historyEl = document.getElementById("history");
+      const toastEl = document.getElementById("toast");
+      const helpModal = document.getElementById("helpModal");
+      const resultOverlay = document.getElementById("resultOverlay");
+      const resultCard = document.getElementById("resultCard");
+      const resultTitle = document.getElementById("resultTitle");
+      const resultSub = document.getElementById("resultSub");
+
+      const state = {
+        balance: START_BALANCE,
+        bet: 1,
+        roundActive: false,
+        roundBet: 0,
+        hits: 0,
+        multiplier: 1,
+        animating: false,
+        progress: 0,
+        tavernIndex: 0,
+        history: [],
+        arrow: null,
+        stuckArrows: [],
+        particles: [],
+        sweatDrops: [],
+        thumpStars: [],
+        arrowTrail: [],
+        appleWobble: 0,
+        charSway: 0,
+        charShiver: 0,
+        blinkTimer: 0,
+        eyesOpen: true,
+        eyeDart: 0,
+        eyeDartTarget: 0,
+        sweatSpawnTimer: 0.5,
+        drunkPhase: 0,
+        drunkNoise: 0,
+        handPull: 0,
+        handFidget: 0,
+        shoulderTwitch: 0,
+        flight: null,
+        flinch: 0,
+        blinkEnd: 0,
+        overlayTimer: null,
+        lastTime: 0,
+        dpr: 1
+      };
+
+      function formatMoney(n) {
+        return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function clampBet(v) {
+        if (Number.isNaN(v) || v < MIN_BET) return MIN_BET;
+        if (v > MAX_BET) return MAX_BET;
+        return Math.round(v * 100) / 100;
+      }
+
+      function logicalSize() {
+        return { w: canvas.width / state.dpr, h: canvas.height / state.dpr };
+      }
+
+      /** Full-body victim ~76% canvas height; head centered; apple on top. */
+      function sceneLayout() {
+        const { w, h } = logicalSize();
+        const cx = w * 0.5;
+        const charH = h * 0.78;
+        const feetY = h * 0.92;
+        const headR = charH * 0.1;
+        const headY = feetY - charH + headR * 1.15;
+        const appleR = headR * 0.38;
+        const appleY = headY - headR * 1.05 - appleR * 0.48;
+        const chinY = headY + headR * 0.55;
+        const foreheadY = headY - headR * 0.72;
+        const shoulderY = headY + headR * 0.88;
+        const hipY = feetY - charH * 0.42;
+        return {
+          w, h, cx, charH, feetY, hipY,
+          headR, headY, headX: cx,
+          bodyW: charH * 0.32,
+          appleX: cx, appleY, appleR,
+          chinY, foreheadY, shoulderY
+        };
+      }
+
+      /** Drunk archer hand — first-person from bottom of screen. */
+      function getPOVHandPose(layout, pullAmount) {
+        const wobbleX = Math.sin(state.drunkPhase) * layout.w * 0.045
+          + Math.sin(state.drunkPhase * 2.6) * layout.w * 0.022
+          + state.drunkNoise * 0.6;
+        const wobbleY = Math.cos(state.drunkPhase * 1.35) * layout.h * 0.028
+          + Math.sin(state.drunkPhase * 0.9) * layout.h * 0.012;
+        const pull = pullAmount * layout.h * 0.07;
+        const handX = layout.w * 0.5 + wobbleX;
+        const handY = layout.h * 0.86 + wobbleY + pull;
+        const nockX = handX + wobbleX * 0.15;
+        const nockY = handY - layout.h * 0.14 - pull * 0.6;
+        return { handX, handY, nockX, nockY, wobbleX, wobbleY, pull };
+      }
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => toastEl.classList.remove("show"), 2200);
+      }
+
+      function openHelp() { helpModal.classList.add("open"); }
+      function closeHelp() {
+        helpModal.classList.remove("open");
+        try { localStorage.setItem(HELP_KEY, "1"); } catch (e) { /* ignore */ }
+      }
+
+      function pulseBalance() {
+        balanceDisplay.classList.add("pulse");
+        setTimeout(() => balanceDisplay.classList.remove("pulse"), 220);
+      }
+
+      function updateUI() {
+        balanceDisplay.textContent = formatMoney(state.balance);
+        multDisplay.textContent = state.multiplier.toFixed(2) + "×";
+        const pot = state.roundActive ? state.roundBet * state.multiplier : 0;
+        potentialDisplay.textContent = formatMoney(pot);
+        betInput.value = state.bet.toFixed(2);
+        betInput.disabled = state.roundActive || state.animating;
+        document.querySelectorAll(".btn-quick").forEach((b) => {
+          b.disabled = state.roundActive || state.animating;
+        });
+        btnShoot.disabled = state.animating || (!state.roundActive && state.balance < state.bet - 1e-9);
+        btnCash.disabled = !state.roundActive || state.hits < 1;
+        seasonFill.style.width = Math.min(100, state.progress) + "%";
+        seasonPct.textContent = Math.min(100, state.progress).toFixed(1) + "%";
+      }
+
+      function addHistory(label, kind) {
+        state.history.unshift({ label, kind });
+        if (state.history.length > 8) state.history.pop();
+        historyEl.innerHTML = "";
+        state.history.forEach((h) => {
+          const chip = document.createElement("div");
+          chip.className = "chip " + h.kind;
+          chip.textContent = h.label;
+          historyEl.appendChild(chip);
+        });
+      }
+
+      function advanceSeason() {
+        state.progress += SEASON_STEP;
+        if (state.progress >= 100) {
+          state.progress = 0;
+          state.tavernIndex = (state.tavernIndex + 1) % TAVERN_NAMES.length;
+          tavernName.textContent = TAVERN_NAMES[state.tavernIndex];
+          showToast("New season — welcome to " + TAVERN_NAMES[state.tavernIndex] + "!");
+        }
+      }
+
+      function showOverlay(type, title, sub) {
+        resultCard.className = "result-card " + type;
+        resultTitle.className = "result-title " + type;
+        resultTitle.textContent = title;
+        resultSub.textContent = sub;
+        resultOverlay.classList.add("show");
+        clearTimeout(state.overlayTimer);
+        state.overlayTimer = setTimeout(() => resultOverlay.classList.remove("show"), OVERLAY_MS);
+      }
+
+      function resetRound() {
+        state.roundActive = false;
+        state.roundBet = 0;
+        state.hits = 0;
+        state.multiplier = 1;
+        state.stuckArrows = [];
+        state.thumpStars = [];
+        state.flight = null;
+        state.arrow = null;
+        state.arrowTrail = [];
+        state.animating = false;
+        state.handPull = 0;
+        state.flinch = 0;
+        updateUI();
+      }
+
+      function endRoundLost(label) {
+        addHistory(label || "LOST", "low");
+        advanceSeason();
+        resetRound();
+      }
+
+      function rollOutcome() {
+        const r = Math.random();
+        if (r < HIT_PROB) return "hit";
+        if (r < HIT_PROB + MISS_FLY_PROB) return "missFly";
+        return "hitPerson";
+      }
+
+      function spawnParticles(x, y, count, colors) {
+        for (let i = 0; i < count; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const sp = 2 + Math.random() * 5;
+          state.particles.push({
+            x, y,
+            vx: Math.cos(a) * sp,
+            vy: Math.sin(a) * sp - 2.5,
+            life: 0.5 + Math.random() * 0.5,
+            maxLife: 1,
+            size: 3 + Math.random() * 5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            star: Math.random() < 0.45
+          });
+        }
+      }
+
+      function spawnForeheadSweat(layout) {
+        if (state.sweatDrops.length >= 5) return;
+        const sway = getCharSway();
+        const hx = layout.headX + sway;
+        state.sweatDrops.push({
+          x: hx + (Math.random() - 0.5) * layout.headR * 0.55,
+          y: layout.foreheadY + Math.random() * layout.headR * 0.08,
+          vy: 22 + Math.random() * 16,
+          size: 4 + Math.random() * 3,
+          chinY: layout.chinY
+        });
+      }
+
+      function getCharSway() {
+        const flinchOff = state.flinch * 6;
+        return Math.sin(state.charSway) * 5 + Math.sin(state.charShiver) * 2.5 + flinchOff;
+      }
+
+      function updateSweatDrops(dt, layout) {
+        state.sweatSpawnTimer -= dt;
+        if (state.sweatSpawnTimer <= 0) {
+          state.sweatSpawnTimer = 0.7 + Math.random() * 1.4;
+          spawnForeheadSweat(layout);
+        }
+        state.sweatDrops = state.sweatDrops.filter((d) => {
+          d.y += d.vy * dt;
+          d.x += Math.sin(d.y * 0.08) * 0.3;
+          if (d.y >= d.chinY) return false;
+          drawSweatBead(d.x, d.y, d.size);
+          return true;
+        });
+      }
+
+      function spawnThump(x, y, scale) {
+        for (let i = 0; i < 5; i++) {
+          const a = -Math.PI / 2 + (i - 2) * 0.45;
+          state.thumpStars.push({
+            x, y,
+            vx: Math.cos(a) * 2.5,
+            vy: Math.sin(a) * 2.5 - 1,
+            life: 0.7,
+            size: 10 + i * 2,
+            rot: Math.random() * Math.PI
+          });
+        }
+      }
+
+      function drawBackground(layout) {
+        const { w, h } = layout;
+
+        const wallGrad = ctx.createLinearGradient(0, 0, 0, h);
+        wallGrad.addColorStop(0, "#4a3220");
+        wallGrad.addColorStop(0.45, "#2e1e12");
+        wallGrad.addColorStop(1, "#1a1008");
+        ctx.fillStyle = wallGrad;
+        ctx.fillRect(0, 0, w, h);
+
+        const fireGrad = ctx.createRadialGradient(w * 0.5, h, 0, w * 0.5, h, h * 0.9);
+        fireGrad.addColorStop(0, "rgba(255, 100, 30, 0.35)");
+        fireGrad.addColorStop(0.4, "rgba(255, 60, 20, 0.1)");
+        fireGrad.addColorStop(1, "transparent");
+        ctx.fillStyle = fireGrad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Tavern wood planks
+        ctx.strokeStyle = "rgba(0,0,0,0.22)";
+        ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 36) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h * 0.75);
+          ctx.stroke();
+        }
+
+        // Side posts (depth)
+        ctx.fillStyle = "#3a2418";
+        ctx.fillRect(0, h * 0.1, w * 0.06, h * 0.65);
+        ctx.fillRect(w * 0.94, h * 0.1, w * 0.06, h * 0.65);
+
+        // POV vignette at bottom
+        const vig = ctx.createLinearGradient(0, h * 0.55, 0, h);
+        vig.addColorStop(0, "transparent");
+        vig.addColorStop(0.6, "rgba(10, 6, 4, 0.35)");
+        vig.addColorStop(1, "rgba(8, 4, 2, 0.75)");
+        ctx.fillStyle = vig;
+        ctx.fillRect(0, h * 0.55, w, h * 0.45);
+      }
+
+      function drawPOVHand(layout, pullAmount, hideArrow) {
+        const pose = getPOVHandPose(layout, pullAmount);
+        const { handX, handY, nockX, nockY } = pose;
+        const s = layout.h / 400;
+
+        // Bow limbs (POV — curve up from bottom corners)
+        ctx.strokeStyle = "#6b4423";
+        ctx.lineWidth = 7 * s;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(layout.w * 0.08, layout.h * 0.98);
+        ctx.quadraticCurveTo(layout.w * 0.15, layout.h * 0.7, nockX - 30 * s, nockY + 20 * s);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(layout.w * 0.92, layout.h * 0.98);
+        ctx.quadraticCurveTo(layout.w * 0.85, layout.h * 0.7, nockX + 30 * s, nockY + 20 * s);
+        ctx.stroke();
+
+        // Bowstring
+        ctx.strokeStyle = "rgba(220, 210, 190, 0.7)";
+        ctx.lineWidth = 1.5 * s;
+        ctx.beginPath();
+        ctx.moveTo(layout.w * 0.08, layout.h * 0.98);
+        ctx.lineTo(nockX, nockY + 8 * s);
+        ctx.lineTo(layout.w * 0.92, layout.h * 0.98);
+        ctx.stroke();
+
+        // Forearm from bottom
+        const armGrad = ctx.createLinearGradient(handX, layout.h, handX, handY);
+        armGrad.addColorStop(0, "#5a3820");
+        armGrad.addColorStop(1, "#7a5030");
+        ctx.fillStyle = armGrad;
+        ctx.beginPath();
+        ctx.moveTo(handX - 42 * s, layout.h + 10 * s);
+        ctx.lineTo(handX + 42 * s, layout.h + 10 * s);
+        ctx.lineTo(handX + 28 * s, handY + 20 * s);
+        ctx.lineTo(handX - 28 * s, handY + 20 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        // Sleeve cuff
+        ctx.fillStyle = "#4a3020";
+        ctx.fillRect(handX - 34 * s, handY + 14 * s, 68 * s, 14 * s);
+
+        // Hand (large POV fist)
+        const skinGrad = ctx.createRadialGradient(handX - 10 * s, handY - 5 * s, 0, handX, handY, 38 * s);
+        skinGrad.addColorStop(0, "#f0d4b8");
+        skinGrad.addColorStop(1, "#d4a880");
+        ctx.fillStyle = skinGrad;
+        ctx.beginPath();
+        ctx.ellipse(handX, handY, 36 * s, 28 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#a08068";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Knuckles / fingers gripping shaft
+        ctx.strokeStyle = "#c8a888";
+        ctx.lineWidth = 4 * s;
+        ctx.lineCap = "round";
+        for (let i = -2; i <= 2; i++) {
+          ctx.beginPath();
+          ctx.arc(handX + i * 11 * s, handY - 8 * s, 9 * s, 0.2, Math.PI - 0.2);
+          ctx.stroke();
+        }
+
+        if (!hideArrow) {
+          drawPOVArrowShaft(nockX, nockY, -Math.PI / 2, layout, 1.15, 0.55);
+        }
+      }
+
+      /** POV arrow shaft pointing toward victim. */
+      function drawPOVArrowShaft(x, y, angle, layout, scaleMul, lengthFrac) {
+        const s = (layout.h / 400) * (scaleMul || 1);
+        const len = layout.h * (lengthFrac || 0.5);
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+
+        ctx.strokeStyle = "#7a5a18";
+        ctx.lineWidth = 5 * s;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -len);
+        ctx.stroke();
+
+        ctx.fillStyle = "#ccc";
+        ctx.beginPath();
+        ctx.moveTo(-5 * s, -len);
+        ctx.lineTo(5 * s, -len);
+        ctx.lineTo(0, -len - 14 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#dd3333";
+        ctx.beginPath();
+        ctx.moveTo(-8 * s, 6 * s);
+        ctx.lineTo(-14 * s, 18 * s);
+        ctx.lineTo(-4 * s, 10 * s);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(8 * s, 6 * s);
+        ctx.lineTo(14 * s, 18 * s);
+        ctx.lineTo(4 * s, 10 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+
+      function drawHumanCharacter(layout, dt, now) {
+        const { headX, headY, headR, cx, shoulderY, hipY, feetY, bodyW, charH } = layout;
+        const sway = getCharSway();
+        const hx = headX + sway;
+        const s = charH / 340;
+        const handWiggle = Math.sin(state.handFidget) * 7 * s;
+        const shoulderLift = 4 * s + Math.sin(state.shoulderTwitch) * 3 * s;
+        const flinchLean = state.flinch * 8 * s;
+
+        state.blinkTimer += dt;
+        if (state.blinkTimer > 2.4 + Math.random() * 0.8) {
+          state.blinkTimer = 0;
+          state.eyesOpen = false;
+          state.blinkEnd = now + 110;
+        }
+        if (state.blinkEnd && now >= state.blinkEnd) {
+          state.eyesOpen = true;
+          state.blinkEnd = 0;
+        }
+
+        state.eyeDart += (state.eyeDartTarget - state.eyeDart) * dt * 5;
+        if (Math.random() < 0.006) {
+          state.eyeDartTarget = (Math.random() - 0.5) * headR * 0.1;
+        }
+
+        const kneeWob = Math.sin(state.charShiver * 2) * 3 * s;
+        const skinLight = "#f6e0c8";
+        const skinMid = "#e8c4a4";
+        const skinShadow = "#c99674";
+        const tunicLight = "#7a8c52";
+        const tunicMid = "#5c6e3c";
+        const tunicDark = "#3e4c2a";
+
+        // --- Boots ---
+        ctx.fillStyle = "#2a1c14";
+        ctx.beginPath();
+        ctx.ellipse(cx - bodyW * 0.2 + sway - flinchLean, feetY - 4 * s, 18 * s, 9 * s, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx + bodyW * 0.2 + sway - flinchLean, feetY - 4 * s, 18 * s, 9 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // --- Legs (thighs + calves with shading) ---
+        drawLimbTube(
+          cx - bodyW * 0.16 + sway, hipY,
+          cx - bodyW * 0.22 + sway + kneeWob - flinchLean, feetY - 8 * s,
+          14 * s, 11 * s, "#4a3828", "#2e2218"
+        );
+        drawLimbTube(
+          cx + bodyW * 0.16 + sway, hipY,
+          cx + bodyW * 0.22 + sway - kneeWob - flinchLean, feetY - 8 * s,
+          14 * s, 11 * s, "#4a3828", "#2e2218"
+        );
+
+        // --- Hips / pelvis ---
+        const hipGrad = ctx.createLinearGradient(cx - bodyW * 0.4, hipY - 20 * s, cx + bodyW * 0.4, hipY + 10 * s);
+        hipGrad.addColorStop(0, tunicMid);
+        hipGrad.addColorStop(1, tunicDark);
+        ctx.fillStyle = hipGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx + sway, hipY - 6 * s, bodyW * 0.38, 18 * s, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // --- Torso (Sims rounded body) ---
+        const torsoTop = shoulderY - shoulderLift;
+        const torsoGrad = ctx.createLinearGradient(cx - bodyW * 0.5 + sway, torsoTop, cx + bodyW * 0.55 + sway, hipY);
+        torsoGrad.addColorStop(0, tunicLight);
+        torsoGrad.addColorStop(0.4, tunicMid);
+        torsoGrad.addColorStop(1, tunicDark);
+        ctx.fillStyle = torsoGrad;
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW * 0.38 + sway, torsoTop + 8 * s);
+        ctx.quadraticCurveTo(cx - bodyW * 0.48 + sway, torsoTop + 4 * s, cx - bodyW * 0.46 + sway, torsoTop + 22 * s);
+        ctx.quadraticCurveTo(cx - bodyW * 0.44 + sway, (torsoTop + hipY) / 2, cx - bodyW * 0.34 + sway, hipY - 4 * s);
+        ctx.quadraticCurveTo(cx + sway, hipY + 8 * s, cx + bodyW * 0.34 + sway, hipY - 4 * s);
+        ctx.quadraticCurveTo(cx + bodyW * 0.44 + sway, (torsoTop + hipY) / 2, cx + bodyW * 0.46 + sway, torsoTop + 22 * s);
+        ctx.quadraticCurveTo(cx + bodyW * 0.48 + sway, torsoTop + 4 * s, cx + bodyW * 0.38 + sway, torsoTop + 8 * s);
+        ctx.quadraticCurveTo(cx + sway, torsoTop - 4 * s, cx - bodyW * 0.38 + sway, torsoTop + 8 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        // Chest soft highlight (Sims plastic sheen)
+        const chestShine = ctx.createRadialGradient(cx - bodyW * 0.08 + sway, torsoTop + 40 * s, 4 * s, cx + sway, torsoTop + 55 * s, bodyW * 0.4);
+        chestShine.addColorStop(0, "rgba(255,255,220,0.14)");
+        chestShine.addColorStop(1, "transparent");
+        ctx.fillStyle = chestShine;
+        ctx.beginPath();
+        ctx.ellipse(cx + sway, torsoTop + 50 * s, bodyW * 0.28, bodyW * 0.22, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Fabric folds
+        ctx.strokeStyle = "rgba(20, 30, 12, 0.32)";
+        ctx.lineWidth = Math.max(1, 1.4 * s);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW * 0.12 + sway, torsoTop + 28 * s);
+        ctx.quadraticCurveTo(cx - bodyW * 0.22 + sway, (torsoTop + hipY) / 2, cx - bodyW * 0.1 + sway, hipY - 24 * s);
+        ctx.moveTo(cx + bodyW * 0.18 + sway, torsoTop + 36 * s);
+        ctx.quadraticCurveTo(cx + bodyW * 0.28 + sway, (torsoTop + hipY) / 2 + 8 * s, cx + bodyW * 0.16 + sway, hipY - 18 * s);
+        ctx.moveTo(cx - bodyW * 0.05 + sway, torsoTop + 55 * s);
+        ctx.quadraticCurveTo(cx + bodyW * 0.05 + sway, torsoTop + 75 * s, cx - bodyW * 0.02 + sway, hipY - 35 * s);
+        ctx.stroke();
+
+        // Belt + buckle
+        ctx.fillStyle = "#3a2818";
+        roundRect(cx - bodyW * 0.36 + sway, hipY - 16 * s, bodyW * 0.72, 11 * s, 3 * s);
+        ctx.fill();
+        const buckle = ctx.createLinearGradient(cx - 10 * s + sway, hipY - 14 * s, cx + 10 * s + sway, hipY - 4 * s);
+        buckle.addColorStop(0, "#e8c547");
+        buckle.addColorStop(1, "#a88428");
+        ctx.fillStyle = buckle;
+        roundRect(cx - 9 * s + sway, hipY - 14 * s, 18 * s, 8 * s, 2 * s);
+        ctx.fill();
+
+        // Collar
+        ctx.fillStyle = "#8a7050";
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW * 0.2 + sway, torsoTop + 6 * s);
+        ctx.quadraticCurveTo(cx + sway, torsoTop - 2 * s, cx + bodyW * 0.2 + sway, torsoTop + 6 * s);
+        ctx.lineTo(cx + bodyW * 0.12 + sway, torsoTop + 20 * s);
+        ctx.quadraticCurveTo(cx + sway, torsoTop + 14 * s, cx - bodyW * 0.12 + sway, torsoTop + 20 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        // --- Arms raised (tense / protective) ---
+        const lShoulderX = cx - bodyW * 0.42 + sway;
+        const rShoulderX = cx + bodyW * 0.42 + sway;
+        const lHandX = cx - bodyW * 0.52 + sway + handWiggle - flinchLean;
+        const rHandX = cx + bodyW * 0.52 + sway - handWiggle - flinchLean;
+        const handY = shoulderY + 38 * s;
+        drawSimsArm(lShoulderX, torsoTop + 10 * s, lHandX, handY, s, true, tunicMid, skinLight, skinMid);
+        drawSimsArm(rShoulderX, torsoTop + 10 * s, rHandX, handY, s, false, tunicMid, skinLight, skinMid);
+
+        // --- Neck ---
+        const neckGrad = ctx.createLinearGradient(hx, headY + headR * 0.35, hx, shoulderY);
+        neckGrad.addColorStop(0, skinLight);
+        neckGrad.addColorStop(0.55, skinMid);
+        neckGrad.addColorStop(1, skinShadow);
+        ctx.fillStyle = neckGrad;
+        ctx.beginPath();
+        ctx.moveTo(hx - 12 * s, headY + headR * 0.45);
+        ctx.quadraticCurveTo(hx - 14 * s, headY + headR * 0.85, hx - 11 * s, shoulderY + 2 * s);
+        ctx.lineTo(hx + 11 * s, shoulderY + 2 * s);
+        ctx.quadraticCurveTo(hx + 14 * s, headY + headR * 0.85, hx + 12 * s, headY + headR * 0.45);
+        ctx.closePath();
+        ctx.fill();
+
+        // Neck shadow under jaw
+        const neckShade = ctx.createLinearGradient(hx, headY + headR * 0.4, hx, headY + headR * 0.75);
+        neckShade.addColorStop(0, "rgba(120,70,50,0.28)");
+        neckShade.addColorStop(1, "transparent");
+        ctx.fillStyle = neckShade;
+        ctx.fillRect(hx - 13 * s, headY + headR * 0.4, 26 * s, 22 * s);
+
+        // --- Ears ---
+        drawSimsEar(hx - headR * 0.88, headY + headR * 0.02, 10 * s, 15 * s, skinMid, true);
+        drawSimsEar(hx + headR * 0.88, headY + headR * 0.02, 10 * s, 15 * s, skinMid, false);
+
+        // --- Head (Sims smooth oval + cheekbones) ---
+        const skinGrad = ctx.createRadialGradient(
+          hx - headR * 0.25, headY - headR * 0.28, headR * 0.08,
+          hx, headY + headR * 0.05, headR * 1.15
+        );
+        skinGrad.addColorStop(0, "#fff0dc");
+        skinGrad.addColorStop(0.35, skinLight);
+        skinGrad.addColorStop(0.7, skinMid);
+        skinGrad.addColorStop(1, skinShadow);
+        ctx.fillStyle = skinGrad;
+        ctx.beginPath();
+        ctx.moveTo(hx, headY - headR);
+        ctx.bezierCurveTo(hx + headR * 0.78, headY - headR, hx + headR * 0.88, headY - headR * 0.15, hx + headR * 0.78, headY + headR * 0.35);
+        ctx.bezierCurveTo(hx + headR * 0.62, headY + headR * 0.95, hx + headR * 0.28, headY + headR * 1.05, hx, headY + headR * 1.02);
+        ctx.bezierCurveTo(hx - headR * 0.28, headY + headR * 1.05, hx - headR * 0.62, headY + headR * 0.95, hx - headR * 0.78, headY + headR * 0.35);
+        ctx.bezierCurveTo(hx - headR * 0.88, headY - headR * 0.15, hx - headR * 0.78, headY - headR, hx, headY - headR);
+        ctx.closePath();
+        ctx.fill();
+
+        // Cheekbone soft planes
+        ctx.fillStyle = "rgba(210, 140, 120, 0.22)";
+        ctx.beginPath();
+        ctx.ellipse(hx - headR * 0.46, headY + headR * 0.12, headR * 0.2, headR * 0.14, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(hx + headR * 0.46, headY + headR * 0.12, headR * 0.2, headR * 0.14, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Jaw / chin shadow
+        const jawGrad = ctx.createRadialGradient(hx, headY + headR * 0.55, headR * 0.05, hx, headY + headR * 0.7, headR * 0.55);
+        jawGrad.addColorStop(0, "rgba(150, 95, 70, 0.32)");
+        jawGrad.addColorStop(1, "transparent");
+        ctx.fillStyle = jawGrad;
+        ctx.beginPath();
+        ctx.ellipse(hx, headY + headR * 0.55, headR * 0.55, headR * 0.32, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // --- Hair (messy swept brown) ---
+        const hairGrad = ctx.createLinearGradient(hx - headR, headY - headR * 1.1, hx + headR * 0.6, headY);
+        hairGrad.addColorStop(0, "#9a6a42");
+        hairGrad.addColorStop(0.45, "#6e4528");
+        hairGrad.addColorStop(1, "#3e2814");
+        ctx.fillStyle = hairGrad;
+        ctx.beginPath();
+        ctx.moveTo(hx - headR * 0.85, headY - headR * 0.15);
+        ctx.quadraticCurveTo(hx - headR * 0.95, headY - headR * 0.85, hx - headR * 0.2, headY - headR * 1.08);
+        ctx.quadraticCurveTo(hx + headR * 0.45, headY - headR * 1.12, hx + headR * 0.9, headY - headR * 0.55);
+        ctx.quadraticCurveTo(hx + headR * 0.75, headY - headR * 0.15, hx + headR * 0.55, headY - headR * 0.05);
+        ctx.quadraticCurveTo(hx + headR * 0.15, headY - headR * 0.55, hx - headR * 0.35, headY - headR * 0.45);
+        ctx.quadraticCurveTo(hx - headR * 0.7, headY - headR * 0.35, hx - headR * 0.85, headY - headR * 0.15);
+        ctx.closePath();
+        ctx.fill();
+        // Side sweep lock
+        ctx.beginPath();
+        ctx.moveTo(hx + headR * 0.35, headY - headR * 0.55);
+        ctx.quadraticCurveTo(hx + headR * 0.95, headY - headR * 0.2, hx + headR * 0.72, headY + headR * 0.25);
+        ctx.quadraticCurveTo(hx + headR * 0.55, headY + headR * 0.05, hx + headR * 0.4, headY - headR * 0.2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(40, 25, 12, 0.4)";
+        ctx.lineWidth = Math.max(1, 1.1 * s);
+        for (let i = 0; i < 6; i++) {
+          const sx0 = hx - headR * 0.55 + i * headR * 0.2;
+          ctx.beginPath();
+          ctx.moveTo(sx0, headY - headR * 0.95);
+          ctx.quadraticCurveTo(sx0 + headR * 0.08, headY - headR * 0.6, sx0 - headR * 0.04, headY - headR * 0.35);
+          ctx.stroke();
+        }
+
+        // --- Brows (raised fear) ---
+        const eyeY = headY - headR * 0.04;
+        const eyeOff = headR * 0.32;
+        ctx.strokeStyle = "#4a3224";
+        ctx.lineWidth = Math.max(1.5, 2.6 * s);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(hx - eyeOff - headR * 0.26, eyeY - headR * 0.38);
+        ctx.quadraticCurveTo(hx - eyeOff - headR * 0.05, eyeY - headR * 0.42, hx - eyeOff + headR * 0.18, eyeY - headR * 0.26);
+        ctx.moveTo(hx + eyeOff + headR * 0.26, eyeY - headR * 0.38);
+        ctx.quadraticCurveTo(hx + eyeOff + headR * 0.05, eyeY - headR * 0.42, hx + eyeOff - headR * 0.18, eyeY - headR * 0.26);
+        ctx.stroke();
+        // Individual brow hairs
+        ctx.lineWidth = Math.max(0.8, 1.1 * s);
+        for (let i = 0; i < 4; i++) {
+          const t = i / 3;
+          const bx = hx - eyeOff - headR * 0.22 + t * headR * 0.4;
+          const by = eyeY - headR * 0.38 + t * headR * 0.1;
+          ctx.beginPath();
+          ctx.moveTo(bx, by);
+          ctx.lineTo(bx + 2 * s, by - 3 * s);
+          ctx.stroke();
+          const bx2 = hx + eyeOff + headR * 0.22 - t * headR * 0.4;
+          ctx.beginPath();
+          ctx.moveTo(bx2, by);
+          ctx.lineTo(bx2 - 2 * s, by - 3 * s);
+          ctx.stroke();
+        }
+
+        // --- Eyes ---
+        const pupilUp = -headR * 0.12;
+        const dart = state.eyeDart;
+        if (state.eyesOpen) {
+          drawSimsEye(hx - eyeOff, eyeY, headR, s, dart, pupilUp);
+          drawSimsEye(hx + eyeOff, eyeY, headR, s, dart, pupilUp);
+        } else {
+          ctx.strokeStyle = "#5a4030";
+          ctx.lineWidth = Math.max(1.5, 2.4 * s);
+          ctx.beginPath();
+          ctx.moveTo(hx - eyeOff - headR * 0.18, eyeY);
+          ctx.quadraticCurveTo(hx - eyeOff, eyeY + 3 * s, hx - eyeOff + headR * 0.18, eyeY);
+          ctx.moveTo(hx + eyeOff - headR * 0.18, eyeY);
+          ctx.quadraticCurveTo(hx + eyeOff, eyeY + 3 * s, hx + eyeOff + headR * 0.18, eyeY);
+          ctx.stroke();
+        }
+
+        // --- Nose ---
+        const noseGrad = ctx.createLinearGradient(hx, headY, hx, headY + headR * 0.24);
+        noseGrad.addColorStop(0, "rgba(255, 230, 210, 0.7)");
+        noseGrad.addColorStop(1, "rgba(190, 140, 115, 0.55)");
+        ctx.fillStyle = noseGrad;
+        ctx.beginPath();
+        ctx.moveTo(hx, headY - headR * 0.02);
+        ctx.quadraticCurveTo(hx + headR * 0.08, headY + headR * 0.1, hx + headR * 0.07, headY + headR * 0.2);
+        ctx.quadraticCurveTo(hx, headY + headR * 0.26, hx - headR * 0.07, headY + headR * 0.2);
+        ctx.quadraticCurveTo(hx - headR * 0.08, headY + headR * 0.1, hx, headY - headR * 0.02);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(150, 100, 80, 0.4)";
+        ctx.lineWidth = Math.max(0.8, 1.1 * s);
+        ctx.beginPath();
+        ctx.moveTo(hx, headY);
+        ctx.lineTo(hx, headY + headR * 0.16);
+        ctx.stroke();
+        ctx.fillStyle = "rgba(150, 100, 80, 0.5)";
+        ctx.beginPath();
+        ctx.ellipse(hx - headR * 0.075, headY + headR * 0.19, Math.max(1, headR * 0.04), Math.max(1, headR * 0.028), 0.25, 0, Math.PI * 2);
+        ctx.ellipse(hx + headR * 0.075, headY + headR * 0.19, Math.max(1, headR * 0.04), Math.max(1, headR * 0.028), -0.25, 0, Math.PI * 2);
+        ctx.fill();
+
+        // --- Mouth (nervous open) ---
+        const mouthY = headY + headR * 0.38;
+        const lipTremor = Math.sin(state.charShiver * 6) * 1.2 * s;
+        // Upper lip
+        const upperLip = ctx.createLinearGradient(hx, mouthY - 5 * s, hx, mouthY + 1 * s);
+        upperLip.addColorStop(0, "#d4a098");
+        upperLip.addColorStop(1, "#b07870");
+        ctx.fillStyle = upperLip;
+        ctx.beginPath();
+        ctx.moveTo(hx - headR * 0.14, mouthY);
+        ctx.quadraticCurveTo(hx - headR * 0.04, mouthY - 5 * s - Math.abs(lipTremor) * 0.3, hx, mouthY - 3 * s);
+        ctx.quadraticCurveTo(hx + headR * 0.04, mouthY - 5 * s - Math.abs(lipTremor) * 0.3, hx + headR * 0.14, mouthY);
+        ctx.quadraticCurveTo(hx, mouthY + 2 * s, hx - headR * 0.14, mouthY);
+        ctx.fill();
+        // Open mouth cavity
+        ctx.fillStyle = "rgba(70, 30, 30, 0.55)";
+        ctx.beginPath();
+        ctx.ellipse(hx, mouthY + 4 * s, Math.max(1, headR * 0.08), Math.max(1, headR * 0.045 + Math.abs(lipTremor) * 0.35), 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Lower lip
+        const lowerLip = ctx.createRadialGradient(hx, mouthY + 7 * s, 0, hx, mouthY + 7 * s, headR * 0.14);
+        lowerLip.addColorStop(0, "#e0b0a8");
+        lowerLip.addColorStop(1, "#a87068");
+        ctx.fillStyle = lowerLip;
+        ctx.beginPath();
+        ctx.ellipse(hx, mouthY + 7 * s + Math.abs(lipTremor) * 0.2, Math.max(1, headR * 0.12), Math.max(1, headR * 0.05), 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawLimbTube(x1, y1, x2, y2, r1, r2, c1, c2) {
+        const g = ctx.createLinearGradient(x1, y1, x2, y2);
+        g.addColorStop(0, c1);
+        g.addColorStop(1, c2);
+        ctx.strokeStyle = g;
+        ctx.lineWidth = (r1 + r2) * 0.85;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      function drawSimsEar(x, y, rx, ry, color, isLeft) {
+        const g = ctx.createRadialGradient(x + (isLeft ? 2 : -2), y - 2, 1, x, y, Math.max(rx, ry));
+        g.addColorStop(0, "#f0d4b8");
+        g.addColorStop(1, color);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.ellipse(x, y, Math.max(1, rx), Math.max(1, ry), 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(160,110,90,0.35)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(x + (isLeft ? 2 : -2), y, Math.max(1, rx * 0.45), Math.max(1, ry * 0.55), 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      function drawSimsEye(ex, ey, headR, s, dart, pupilUp) {
+        // Sclera with subtle shading
+        const sclera = ctx.createRadialGradient(ex - 2 * s, ey - 2 * s, 1, ex, ey, headR * 0.26);
+        sclera.addColorStop(0, "#ffffff");
+        sclera.addColorStop(0.7, "#f2f2f8");
+        sclera.addColorStop(1, "#d8d0c8");
+        ctx.fillStyle = sclera;
+        ctx.beginPath();
+        ctx.ellipse(ex, ey, Math.max(1, headR * 0.22), Math.max(1, headR * 0.28), 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(140, 90, 80, 0.28)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        const ix = ex + dart;
+        const iy = ey + pupilUp;
+        const irisR = Math.max(1.5, headR * 0.11);
+        const iris = ctx.createRadialGradient(ix - irisR * 0.25, iy - irisR * 0.25, 0, ix, iy, irisR);
+        iris.addColorStop(0, "#a87848");
+        iris.addColorStop(0.55, "#6a4828");
+        iris.addColorStop(1, "#2e1c10");
+        ctx.fillStyle = iris;
+        ctx.beginPath();
+        ctx.arc(ix, iy, irisR, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#120c08";
+        ctx.beginPath();
+        ctx.arc(ix, iy, Math.max(1, headR * 0.055), 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(255,255,255,0.9)";
+        ctx.beginPath();
+        ctx.arc(ix + 2.5 * s, iy - 3.5 * s, Math.max(1, 2.8 * s), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.45)";
+        ctx.beginPath();
+        ctx.arc(ix - 3 * s, iy + 2 * s, Math.max(0.8, 1.4 * s), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawSimsArm(shoulderX, shoulderY, handX, handY, s, isLeft, sleeveColor, skinLight, skinMid) {
+        const midX = (shoulderX + handX) / 2 + (isLeft ? -10 : 10) * s;
+        const midY = (shoulderY + handY) / 2 + 6 * s;
+        const dir = isLeft ? -1 : 1;
+
+        // Sleeve puff at shoulder
+        const sleeveGrad = ctx.createRadialGradient(shoulderX, shoulderY, 2 * s, shoulderX + dir * 6 * s, shoulderY + 10 * s, 22 * s);
+        sleeveGrad.addColorStop(0, "#8a9c5a");
+        sleeveGrad.addColorStop(1, sleeveColor);
+        ctx.fillStyle = sleeveGrad;
+        ctx.beginPath();
+        ctx.ellipse(shoulderX + dir * 4 * s, shoulderY + 8 * s, 16 * s, 14 * s, dir * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Upper arm (skin)
+        const armGrad = ctx.createLinearGradient(shoulderX, shoulderY, handX, handY);
+        armGrad.addColorStop(0, skinLight);
+        armGrad.addColorStop(0.5, skinMid);
+        armGrad.addColorStop(1, "#c89878");
+        ctx.strokeStyle = armGrad;
+        ctx.lineWidth = 13 * s;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        ctx.moveTo(shoulderX + dir * 4 * s, shoulderY + 12 * s);
+        ctx.quadraticCurveTo(midX, midY, handX, handY);
+        ctx.stroke();
+
+        // Elbow joint soft circle
+        ctx.fillStyle = skinMid;
+        ctx.beginPath();
+        ctx.arc(midX, midY, 7 * s, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hand palm
+        const palmGrad = ctx.createRadialGradient(handX - 2 * s, handY - 2 * s, 0, handX, handY, 13 * s);
+        palmGrad.addColorStop(0, "#f2dcc4");
+        palmGrad.addColorStop(1, "#c89874");
+        ctx.fillStyle = palmGrad;
+        ctx.beginPath();
+        ctx.ellipse(handX, handY, Math.max(1, 11 * s), Math.max(1, 9 * s), dir * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Fingers with knuckles
+        const fidget = Math.sin(state.handFidget + (isLeft ? 0 : 1.3)) * 2.5 * s;
+        for (let i = 0; i < 4; i++) {
+          const spread = (i - 1.5) * 4.2 * s;
+          const fx = handX + dir * (5 * s) + (isLeft ? -spread : spread) * 0.35;
+          const fy = handY + 8 * s + i * 0.8 * s + fidget * (0.4 + i * 0.15);
+          const tipX = fx + dir * (7 + i * 0.4) * s;
+          const tipY = fy + (9 + Math.sin(state.handFidget * 2.2 + i) * 1.5) * s;
+          ctx.strokeStyle = "#e2c4a4";
+          ctx.lineWidth = Math.max(1.5, (3.4 - i * 0.25) * s);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(handX + dir * 2 * s, handY + 3 * s);
+          ctx.quadraticCurveTo(fx, fy, tipX, tipY);
+          ctx.stroke();
+          // Knuckle
+          ctx.fillStyle = "#d8b898";
+          ctx.beginPath();
+          ctx.arc(fx, fy, Math.max(1, 2.2 * s), 0, Math.PI * 2);
+          ctx.fill();
+          // Fingertip
+          ctx.beginPath();
+          ctx.arc(tipX, tipY, Math.max(1, 2 * s), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // Thumb
+        ctx.strokeStyle = "#e2c4a4";
+        ctx.lineWidth = Math.max(1.5, 3 * s);
+        ctx.beginPath();
+        ctx.moveTo(handX - dir * 4 * s, handY);
+        ctx.quadraticCurveTo(handX - dir * 10 * s, handY + 2 * s + fidget, handX - dir * 8 * s, handY + 10 * s);
+        ctx.stroke();
+      }
+
+      function drawArm(shoulderX, shoulderY, handX, handY, s, isLeft) {
+        drawSimsArm(shoulderX, shoulderY, handX, handY, s, isLeft, "#5c6e3c", "#f6e0c8", "#e8c4a4");
+      }
+
+      function drawSweatBead(x, y, size) {
+        const g = ctx.createRadialGradient(x - size * 0.2, y - size * 0.3, 0, x, y, size);
+        g.addColorStop(0, "rgba(200, 235, 255, 0.95)");
+        g.addColorStop(0.6, "rgba(120, 200, 255, 0.75)");
+        g.addColorStop(1, "rgba(80, 160, 230, 0.4)");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(x, y - size);
+        ctx.quadraticCurveTo(x + size * 0.55, y - size * 0.2, x + size * 0.35, y + size * 0.5);
+        ctx.quadraticCurveTo(x, y + size * 1.3, x - size * 0.35, y + size * 0.5);
+        ctx.quadraticCurveTo(x - size * 0.55, y - size * 0.2, x, y - size);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.55)";
+        ctx.beginPath();
+        ctx.arc(x - size * 0.2, y - size * 0.35, size * 0.22, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawApple(layout) {
+        const { appleX, appleY, appleR, charH } = layout;
+        const s = charH / 280;
+        const wobble = state.appleWobble > 0 ? Math.sin(state.appleWobble) * 0.18 : 0;
+        const sway = getCharSway();
+        const ax = appleX + sway + Math.sin(state.appleWobble * 0.8) * 3 * s;
+        const ay = appleY;
+
+        ctx.save();
+        ctx.translate(ax, ay);
+        ctx.rotate(wobble);
+
+        // Stem
+        ctx.strokeStyle = "#4a3020";
+        ctx.lineWidth = 4 * s;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(0, -appleR * 0.9);
+        ctx.quadraticCurveTo(6 * s, -appleR * 1.6, 12 * s, -appleR * 1.25);
+        ctx.stroke();
+
+        // Leaf
+        ctx.fillStyle = "#3d9b42";
+        ctx.beginPath();
+        ctx.ellipse(10 * s, -appleR * 1.35, 12 * s, 7 * s, 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#2a6a2e";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Shiny apple
+        const grad = ctx.createRadialGradient(-appleR * 0.35, -appleR * 0.35, appleR * 0.1, 0, 0, appleR);
+        grad.addColorStop(0, "#ff6666");
+        grad.addColorStop(0.45, "#ee2222");
+        grad.addColorStop(0.85, "#bb1111");
+        grad.addColorStop(1, "#881010");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, appleR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#770808";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Big highlight
+        ctx.fillStyle = "rgba(255,255,255,0.5)";
+        ctx.beginPath();
+        ctx.ellipse(-appleR * 0.35, -appleR * 0.4, appleR * 0.28, appleR * 0.18, -0.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.25)";
+        ctx.beginPath();
+        ctx.ellipse(appleR * 0.2, appleR * 0.15, appleR * 0.12, appleR * 0.08, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+
+      function drawStuckArrows(layout) {
+        state.stuckArrows.forEach((a) => {
+          drawPOVArrowShaft(a.x, a.y, a.angle, layout, a.scale || 1, 0.11);
+        });
+      }
+
+      function drawArrowTrail(layout) {
+        const trail = state.arrowTrail;
+        if (trail.length < 2) return;
+        const s = layout.h / 400;
+        for (let i = 1; i < trail.length; i++) {
+          const alpha = (i / trail.length) * 0.45;
+          ctx.strokeStyle = `rgba(200, 180, 140, ${alpha})`;
+          ctx.lineWidth = 4 * s * alpha;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+          ctx.lineTo(trail[i].x, trail[i].y);
+          ctx.stroke();
+        }
+      }
+
+      function drawFlyingArrow(layout) {
+        if (!state.arrow) return;
+        drawArrowTrail(layout);
+        const a = state.arrow;
+        const angle = Math.atan2(a.vy, a.vx) - Math.PI / 2;
+        drawPOVArrowShaft(a.x, a.y, angle, layout, 1, 0.14);
+      }
+
+      function drawParticles(dt) {
+        state.particles = state.particles.filter((p) => {
+          p.life -= dt;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.18;
+          if (p.life <= 0) return false;
+          ctx.globalAlpha = p.life / p.maxLife;
+          if (p.star) {
+            ctx.font = `bold ${p.size * 2.8}px serif`;
+            ctx.fillStyle = p.color;
+            ctx.fillText("★", p.x, p.y);
+          } else {
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          return true;
+        });
+      }
+
+      function drawThumpStars(dt) {
+        state.thumpStars = state.thumpStars.filter((st) => {
+          st.life -= dt;
+          st.x += st.vx;
+          st.y += st.vy;
+          if (st.life <= 0) return false;
+          ctx.globalAlpha = st.life;
+          ctx.font = `bold ${st.size}px serif`;
+          ctx.fillStyle = "#ffe08a";
+          ctx.fillText("★", st.x, st.y);
+          ctx.globalAlpha = 1;
+          return true;
+        });
+      }
+
+      function roundRect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      function render(now) {
+        const dt = Math.min(0.05, (now - state.lastTime) / 1000 || 0.016);
+        state.lastTime = now;
+
+        state.charSway += dt * 2.2;
+        state.charShiver += dt * 14;
+        state.handFidget += dt * 5.5;
+        state.shoulderTwitch += dt * 9;
+        state.drunkPhase += dt * 3.8;
+        if (Math.random() < 0.02) state.drunkNoise = (Math.random() - 0.5) * 8;
+        state.drunkNoise *= 0.92;
+
+        if (state.appleWobble > 0) {
+          state.appleWobble += dt * 14;
+          if (state.appleWobble > Math.PI * 4) state.appleWobble = 0;
+        }
+
+        if (state.flinch > 0.01) state.flinch *= Math.pow(0.9, dt * 60);
+        else state.flinch = 0;
+
+        const layout = sceneLayout();
+        updateFlight(now, layout);
+
+        ctx.clearRect(0, 0, layout.w, layout.h);
+        drawBackground(layout);
+        drawHumanCharacter(layout, dt, now);
+        drawApple(layout);
+        drawStuckArrows(layout);
+        drawPOVHand(layout, state.handPull, !!state.arrow);
+        drawFlyingArrow(layout);
+        updateSweatDrops(dt, layout);
+        drawParticles(dt);
+        drawThumpStars(dt);
+      }
+
+      function computeFlightTarget(outcome, layout) {
+        const sway = getCharSway();
+        const appleX = layout.appleX + sway;
+        const appleY = layout.appleY;
+        const { cx, shoulderY, hipY, headX, headY, headR, bodyW, w, h } = layout;
+        const hx = headX + sway;
+
+        if (outcome === "hit") {
+          return {
+            endX: appleX + (Math.random() - 0.5) * layout.appleR * 0.3,
+            endY: appleY,
+            endAngle: -Math.PI / 2 + (Math.random() - 0.5) * 0.25
+          };
+        }
+
+        if (outcome === "missFly") {
+          const veerLeft = Math.random() < 0.5;
+          let endX, endY;
+          if (Math.random() < 0.45) {
+            endX = veerLeft ? -w * 0.12 : w * 1.12;
+            endY = headY + headR * (0.2 + Math.random() * 0.6);
+          } else {
+            endX = hx + (veerLeft ? -headR * 1.8 : headR * 1.8);
+            endY = -h * 0.15;
+          }
+          const endAngle = Math.atan2(endY - layout.h * 0.72, endX - w * 0.5) - Math.PI / 2;
+          return { endX, endY, endAngle };
+        }
+
+        const zone = Math.floor(Math.random() * 3);
+        let endX, endY, endAngle;
+        if (zone === 0) {
+          const left = Math.random() < 0.5;
+          endX = cx + sway + (left ? -bodyW * 0.4 : bodyW * 0.4);
+          endY = shoulderY + 6;
+          endAngle = left ? Math.PI * 0.2 : -Math.PI * 0.2;
+        } else if (zone === 1) {
+          endX = cx + sway + (Math.random() - 0.5) * bodyW * 0.22;
+          endY = (shoulderY + hipY) / 2 + 10;
+          endAngle = (Math.random() - 0.5) * 0.45;
+        } else {
+          const left = Math.random() < 0.5;
+          endX = hx + (left ? -headR * 0.72 : headR * 0.72);
+          endY = headY + headR * 0.05;
+          endAngle = left ? Math.PI * 0.4 : -Math.PI * 0.4;
+        }
+        return { endX, endY, endAngle };
+      }
+
+      function startFlight(outcome) {
+        const layout = sceneLayout();
+        const { endX, endY, endAngle } = computeFlightTarget(outcome, layout);
+
+        state.flight = {
+          startTime: performance.now(),
+          outcome,
+          endX, endY, endAngle,
+          landed: false,
+          landTime: 0,
+          settleTimer: null
+        };
+        state.animating = true;
+        state.arrowTrail = [];
+        state.arrow = null;
+        updateUI();
+      }
+
+      function updateFlight(now, layout) {
+        const f = state.flight;
+        if (!f) return;
+
+        const elapsed = now - f.startTime;
+        const total = PULL_MS + SNAP_MS + FLIGHT_MS;
+
+        // Hard failsafe: never leave Shoot locked if clocks desync
+        if (elapsed > total + SETTLE_MS + 2500 && !f._completing) {
+          f._completing = true;
+          completeFlight(layout);
+          return;
+        }
+
+        if (f.landed) {
+          if (now - f.landTime >= SETTLE_MS) {
+            completeFlight(layout);
+          }
+          return;
+        }
+
+        if (elapsed < PULL_MS) {
+          state.handPull = elapsed / PULL_MS;
+          state.arrow = null;
+          return;
+        }
+
+        if (elapsed < PULL_MS + SNAP_MS) {
+          state.handPull = 1 - (elapsed - PULL_MS) / SNAP_MS;
+          state.arrow = null;
+          return;
+        }
+
+        if (elapsed < total) {
+          state.handPull = 0;
+          const flyT = (elapsed - PULL_MS - SNAP_MS) / FLIGHT_MS;
+          const e = 1 - Math.pow(1 - flyT, 2.3);
+          const pose = getPOVHandPose(layout, 0);
+          const start = { x: pose.nockX, y: pose.nockY };
+          const midX = (start.x + f.endX) / 2;
+          const midY = (start.y + f.endY) / 2 - layout.h * 0.05;
+          const u = 1 - e;
+          let x = u * u * start.x + 2 * u * e * midX + e * e * f.endX;
+          let y = u * u * start.y + 2 * u * e * midY + e * e * f.endY;
+          const wobble = Math.sin(flyT * 24 + elapsed * 0.02) * layout.w * 0.02 * (1 - flyT * 0.5);
+          x += wobble;
+          const nx = 2 * u * (midX - start.x) + 2 * e * (f.endX - midX);
+          const ny = 2 * u * (midY - start.y) + 2 * e * (f.endY - midY);
+          state.arrow = {
+            x: Number.isFinite(x) ? x : f.endX,
+            y: Number.isFinite(y) ? y : f.endY,
+            vx: Number.isFinite(nx) ? nx : 0,
+            vy: Number.isFinite(ny) ? ny : -1
+          };
+          state.arrowTrail.push({ x: state.arrow.x, y: state.arrow.y });
+          if (state.arrowTrail.length > 14) state.arrowTrail.shift();
+          return;
+        }
+
+        if (f.landed) return;
+        f.landed = true;
+        f.landTime = now;
+        state.handPull = 0;
+        state.arrow = null;
+        state.arrowTrail = [];
+
+        if (f.outcome === "hit") {
+          state.stuckArrows.push({ x: f.endX, y: f.endY, angle: f.endAngle, scale: 1 });
+          state.appleWobble = 0.05;
+          spawnParticles(f.endX, f.endY, 24, ["#ffe08a", "#ff8a3a", "#6dca8a", "#fff", "#e8c547"]);
+        } else if (f.outcome === "hitPerson") {
+          state.stuckArrows.push({ x: f.endX, y: f.endY, angle: f.endAngle, scale: 1 });
+          state.flinch = 1;
+          spawnThump(f.endX, f.endY);
+          document.body.classList.add("flash-red");
+          setTimeout(() => document.body.classList.remove("flash-red"), 500);
+        } else {
+          document.body.classList.add("flash-red");
+          setTimeout(() => document.body.classList.remove("flash-red"), 500);
+        }
+
+        // Wall-clock settle so completion never depends solely on RAF timestamps
+        clearTimeout(f.settleTimer);
+        f.settleTimer = setTimeout(() => {
+          if (state.flight === f) completeFlight(layout);
+        }, SETTLE_MS);
+      }
+
+      function completeFlight(layout) {
+        const f = state.flight;
+        if (!f) return;
+        if (f.settleTimer) clearTimeout(f.settleTimer);
+
+        state.flight = null;
+        state.arrow = null;
+        state.arrowTrail = [];
+        state.handPull = 0;
+        state.animating = false;
+
+        if (f.outcome === "hit") {
+          state.hits += 1;
+          state.multiplier = Math.pow(2, state.hits);
+          showOverlay("hit", "HIT!", "+" + state.multiplier.toFixed(2) + "×");
+          showToast("Apple struck! Multiplier doubled.");
+        } else if (f.outcome === "hitPerson") {
+          showOverlay("miss", "HIT PERSON – BET LOST", "The arrow struck the archer's target!");
+          showToast("Ouch! You hit the person — bet lost.");
+          endRoundLost("OUCH");
+        } else {
+          showOverlay("miss", "MISS – BET LOST", "Arrow flew past!");
+          showToast("Missed the apple — bet lost.");
+          endRoundLost("MISS");
+        }
+        updateUI();
+      }
+
+      function resizeCanvas() {
+        const stage = canvas.parentElement;
+        const rect = stage.getBoundingClientRect();
+        state.dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(rect.width * state.dpr);
+        canvas.height = Math.round(rect.height * state.dpr);
+        ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+        canvas.style.width = rect.width + "px";
+        canvas.style.height = rect.height + "px";
+      }
+
+      function shoot() {
+        if (state.animating) return;
+        if (!state.roundActive) {
+          if (state.balance < state.bet - 1e-9) {
+            showToast("Not enough balance");
+            return;
+          }
+          state.roundBet = state.bet;
+          state.balance = Math.round((state.balance - state.roundBet) * 100) / 100;
+          state.roundActive = true;
+          state.hits = 0;
+          state.multiplier = 1;
+          pulseBalance();
+        }
+        startFlight(rollOutcome());
+      }
+
+      function cashOut() {
+        if (!state.roundActive || state.hits < 1) return;
+        if (state.flight && state.flight.settleTimer) clearTimeout(state.flight.settleTimer);
+        state.flight = null;
+        state.arrow = null;
+        state.arrowTrail = [];
+        state.animating = false;
+        state.handPull = 0;
+        state.flinch = 0;
+        const win = Math.round(state.roundBet * state.multiplier * 100) / 100;
+        state.balance = Math.round((state.balance + win) * 100) / 100;
+        pulseBalance();
+        const label = state.multiplier >= 10
+          ? state.multiplier.toFixed(0) + "×"
+          : state.multiplier.toFixed(1) + "×";
+        const kind = state.multiplier >= 8 ? "high" : state.multiplier >= 2 ? "mid" : "low";
+        addHistory(label, kind);
+        showOverlay("cash", "CASHED OUT", "YOU WON " + state.multiplier.toFixed(2) + "× · " + formatMoney(win));
+        advanceSeason();
+        resetRound();
+      }
+
+      window.simulate = function simulate(rounds = 10000) {
+        let total = 0;
+        for (let i = 0; i < rounds; i++) {
+          if (Math.random() < HIT_PROB) total += 2;
+        }
+        const rtp = total / rounds;
+        console.log("Drunken Archer simulate(" + rounds + ")");
+        console.log("  Hit rate target:", (HIT_PROB * 100).toFixed(1) + "%");
+        console.log("  Avg payout multiplier (cash out after 1 hit):", rtp.toFixed(4));
+        console.log("  RTP:", (rtp * 100).toFixed(2) + "%");
+        return rtp;
+      };
+
+      betInput.addEventListener("change", () => {
+        state.bet = clampBet(parseFloat(betInput.value));
+        updateUI();
+      });
+
+      document.querySelectorAll(".btn-quick[data-bet]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.bet = clampBet(parseFloat(btn.dataset.bet));
+          updateUI();
+        });
+      });
+
+      document.getElementById("btnDouble").addEventListener("click", () => {
+        state.bet = clampBet(state.bet * 2);
+        updateUI();
+      });
+
+      btnShoot.addEventListener("click", shoot);
+      btnCash.addEventListener("click", cashOut);
+      document.getElementById("btnHelp").addEventListener("click", openHelp);
+      document.getElementById("btnCloseHelp").addEventListener("click", closeHelp);
+      helpModal.addEventListener("click", (e) => {
+        if (e.target === helpModal) closeHelp();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && !helpModal.classList.contains("open")) {
+          e.preventDefault();
+          shoot();
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+        render(performance.now());
+      });
+
+      resizeCanvas();
+      updateUI();
+      try {
+        if (!localStorage.getItem(HELP_KEY)) openHelp();
+      } catch (e) {
+        openHelp();
+      }
+
+      function loop(now) {
+        try {
+          render(now);
+        } catch (err) {
+          console.error("Render error:", err);
+          // Never let a draw glitch kill the game loop (was freezing Shoot).
+          if (state.animating && state.flight) {
+            try { completeFlight(sceneLayout()); } catch (e2) {
+              state.flight = null;
+              state.animating = false;
+              state.arrow = null;
+              state.handPull = 0;
+              updateUI();
+            }
+          }
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>
