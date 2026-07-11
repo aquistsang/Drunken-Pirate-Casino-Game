@@ -159,6 +159,43 @@
       transform: translateY(-50%) scale(1.06);
     }
 
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+    }
+
+    .btn-mute {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(232, 197, 71, 0.15);
+      border: 1px solid rgba(232, 197, 71, 0.45);
+      color: var(--gold);
+      font-size: 0.95rem;
+      line-height: 1;
+      box-shadow: 0 0 10px rgba(232, 197, 71, 0.15);
+    }
+
+    .btn-mute:hover {
+      background: rgba(232, 197, 71, 0.3);
+      transform: scale(1.06);
+    }
+
+    .btn-mute.is-muted {
+      opacity: 0.7;
+      color: rgba(243, 230, 208, 0.65);
+    }
+
+    #volSlider {
+      width: 88px;
+      height: 24px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
     .panel {
       background: var(--glass);
       backdrop-filter: blur(12px);
@@ -414,10 +451,20 @@
 
     .btn-cash:hover:not(:disabled) { filter: brightness(1.08); }
 
+    .controls-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 36px;
+    }
+
     .hint {
-      text-align: center;
+      flex: 1 1 auto;
+      text-align: right;
       font-size: 0.62rem;
       color: rgba(243, 230, 208, 0.4);
+      line-height: 1.3;
     }
 
     .toast {
@@ -581,6 +628,16 @@
         font-size: 0.9rem;
       }
 
+      .controls-footer {
+        justify-content: flex-start;
+      }
+
+      .hint { display: none; }
+
+      #volSlider {
+        width: 96px;
+      }
+
       .panel {
         padding: 6px 8px;
         border-radius: 10px;
@@ -638,8 +695,6 @@
         min-height: 44px;
         font-size: 0.95rem;
       }
-
-      .hint { display: none; }
     }
 
     @media (max-height: 620px) {
@@ -714,7 +769,13 @@
         <button type="button" class="btn-shoot" id="btnShoot">🔫 FIRE</button>
         <button type="button" class="btn-cash" id="btnCash" disabled>💰 Cash Out</button>
       </div>
-      <p class="hint">Spacebar to FIRE · Cash out anytime</p>
+      <div class="controls-footer">
+        <div class="audio-controls">
+          <button type="button" class="btn-mute" id="btnMute" aria-label="Mute sound" title="Mute">🔊</button>
+          <input type="range" id="volSlider" min="0" max="100" value="80" step="1" aria-label="Volume" />
+        </div>
+        <p class="hint">Spacebar to FIRE · Cash out anytime</p>
+      </div>
     </div>
   </div>
 
@@ -951,18 +1012,76 @@
       const sfxShot = new Audio("pistol-shot.mp3");
       const sfxAppleHit = new Audio("apple-hit.mp3");
       const sfxFaceHit = new Audio("exhale.wav");
-      [sfxShot, sfxAppleHit, sfxFaceHit].forEach((a) => {
+      const sfxCashOut = new Audio("cash-out.mp3");
+      [sfxShot, sfxAppleHit, sfxFaceHit, sfxCashOut].forEach((a) => {
         a.preload = "auto";
         a.load();
       });
-      sfxFaceHit.volume = 1;
+
+      const VOL_KEY = "drunkenPirateVolume";
+      const MUTE_KEY = "drunkenPirateMuted";
+      const btnMute = document.getElementById("btnMute");
+      const volSlider = document.getElementById("volSlider");
+
+      function loadAudioPrefs() {
+        let vol = 0.8;
+        let muted = false;
+        try {
+          const storedVol = localStorage.getItem(VOL_KEY);
+          const storedMute = localStorage.getItem(MUTE_KEY);
+          if (storedVol != null) vol = Math.max(0, Math.min(1, parseFloat(storedVol) || 0));
+          if (storedMute != null) muted = storedMute === "1";
+        } catch (e) {}
+        return { vol, muted };
+      }
+
+      const audioPrefs = loadAudioPrefs();
+      let masterVolume = audioPrefs.vol;
+      let soundMuted = audioPrefs.muted;
+      volSlider.value = String(Math.round(masterVolume * 100));
 
       // Web Audio keeps lose-exhale audible even after a short delay (HTMLAudio play()
       // from setTimeout is often blocked once the click gesture expires).
       let sfxCtx = null;
       let exhaleBuffer = null;
+      let masterGain = null;
+
+      function effectiveVolume() {
+        return soundMuted ? 0 : masterVolume;
+      }
+
+      function syncMuteUi() {
+        btnMute.textContent = soundMuted || masterVolume <= 0.001 ? "🔇" : "🔊";
+        btnMute.classList.toggle("is-muted", soundMuted || masterVolume <= 0.001);
+        btnMute.setAttribute("aria-label", soundMuted ? "Unmute sound" : "Mute sound");
+        btnMute.title = soundMuted ? "Unmute" : "Mute";
+        volSlider.disabled = soundMuted;
+      }
+
+      function applyVolume() {
+        const v = effectiveVolume();
+        sfxShot.volume = v;
+        sfxAppleHit.volume = v;
+        sfxFaceHit.volume = Math.min(1, v);
+        sfxCashOut.volume = v;
+        if (masterGain) masterGain.gain.value = v * 1.8;
+        syncMuteUi();
+      }
+
+      function persistAudioPrefs() {
+        try {
+          localStorage.setItem(VOL_KEY, String(masterVolume));
+          localStorage.setItem(MUTE_KEY, soundMuted ? "1" : "0");
+        } catch (e) {}
+      }
+
       function getSfxCtx() {
         if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!masterGain) {
+          masterGain = sfxCtx.createGain();
+          masterGain.gain.value = effectiveVolume() * 1.8;
+          masterGain.connect(sfxCtx.destination);
+        }
         return sfxCtx;
       }
       function unlockSfx() {
@@ -975,33 +1094,50 @@
         .then((buf) => { exhaleBuffer = buf; })
         .catch(() => {});
 
+      applyVolume();
+
+      btnMute.addEventListener("click", () => {
+        soundMuted = !soundMuted;
+        persistAudioPrefs();
+        applyVolume();
+        unlockSfx();
+      });
+
+      volSlider.addEventListener("input", () => {
+        masterVolume = Math.max(0, Math.min(1, (parseInt(volSlider.value, 10) || 0) / 100));
+        if (masterVolume > 0 && soundMuted) soundMuted = false;
+        persistAudioPrefs();
+        applyVolume();
+      });
+
       function playSfx(audio) {
         try {
+          if (effectiveVolume() <= 0) return;
           unlockSfx();
           audio.pause();
           audio.currentTime = 0;
+          audio.volume = effectiveVolume();
           const p = audio.play();
           if (p && typeof p.catch === "function") p.catch(() => {});
         } catch (e) { /* ignore autoplay blocks */ }
       }
 
       function playLoseExhale() {
+        if (effectiveVolume() <= 0) return;
         unlockSfx();
         const ctx = getSfxCtx();
         const start = () => {
           if (exhaleBuffer) {
             const src = ctx.createBufferSource();
             src.buffer = exhaleBuffer;
-            const gain = ctx.createGain();
-            gain.gain.value = 1.8;
-            src.connect(gain);
-            gain.connect(ctx.destination);
+            src.connect(masterGain || ctx.destination);
             // Right after the audible bang (~170ms into the gunshot file)
             src.start(ctx.currentTime + 0.17);
             return;
           }
           // Fallback: HTMLAudio in the same gesture stack
           try {
+            sfxFaceHit.volume = effectiveVolume();
             sfxFaceHit.currentTime = 0;
             sfxFaceHit.play().catch(() => {});
           } catch (e) {}
@@ -1864,6 +2000,7 @@
         state.animating = false;
         state.handPull = 0;
         state.flinch = 0;
+        playSfx(sfxCashOut);
         const win = Math.round(state.roundBet * state.multiplier * 100) / 100;
         state.balance = Math.round((state.balance + win) * 100) / 100;
         pulseBalance();
