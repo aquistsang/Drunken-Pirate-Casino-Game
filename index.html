@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>The Drunken Pirate — Boyz Casino</title>
   <style>
     :root {
@@ -40,6 +40,11 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      padding:
+        env(safe-area-inset-top, 0px)
+        env(safe-area-inset-right, 0px)
+        env(safe-area-inset-bottom, 0px)
+        env(safe-area-inset-left, 0px);
     }
 
     body::before {
@@ -262,7 +267,7 @@
       position: relative;
       width: 100%;
       flex: 1 1 auto;
-      min-height: min(52dvh, 420px);
+      min-height: 0;
       max-height: 100%;
       aspect-ratio: 5 / 4;
       border-radius: 14px;
@@ -545,6 +550,114 @@
 
       .btn-quick {
         flex: 1;
+      }
+    }
+
+    /* Fit full UI in phone viewport — scene fills leftover space, nothing clipped */
+    @media (max-width: 640px), (max-height: 820px) {
+      .pub-roof {
+        height: clamp(10px, 1.6dvh, 18px);
+      }
+
+      .wrap {
+        padding: 2px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+        gap: 4px;
+      }
+
+      header.brand {
+        padding: 1px 40px 2px;
+      }
+
+      .brand-eyebrow { display: none; }
+
+      .brand h1 {
+        font-size: clamp(0.95rem, 3.2vw + 0.35rem, 1.25rem);
+        letter-spacing: 0.1em;
+      }
+
+      .btn-help {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+
+      .panel {
+        padding: 6px 8px;
+        border-radius: 10px;
+      }
+
+      .stats-row { gap: 4px; }
+
+      .stat .label { font-size: 0.5rem; margin-bottom: 1px; }
+
+      .stat .value {
+        font-size: clamp(0.85rem, 2.8vw, 1rem);
+      }
+
+      .result-banner {
+        margin-top: 4px;
+        min-height: 30px;
+        padding: 5px 8px;
+      }
+
+      .result-banner .result-title {
+        font-size: 0.8rem;
+      }
+
+      .scene-slot {
+        flex: 1 1 auto;
+        min-height: 140px;
+      }
+
+      .scene-stage {
+        aspect-ratio: unset;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        border-width: 2px;
+        border-radius: 10px;
+      }
+
+      .controls { gap: 5px; }
+
+      .bet-label { margin-bottom: 2px; }
+
+      #betInput,
+      .btn-quick {
+        min-height: 40px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      .action-row {
+        gap: 6px;
+      }
+
+      .btn-shoot,
+      .btn-cash {
+        min-height: 44px;
+        font-size: 0.95rem;
+      }
+
+      .hint { display: none; }
+    }
+
+    @media (max-height: 620px) {
+      .pub-roof { display: none; }
+
+      .stats-row {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .result-banner {
+        min-height: 26px;
+        margin-top: 2px;
+      }
+
+      .scene-slot { min-height: 110px; }
+
+      .action-row {
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -1806,6 +1919,12 @@
         resizeCanvas();
         render(performance.now());
       });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", () => {
+          resizeCanvas();
+          render(performance.now());
+        });
+      }
 
       resizeCanvas();
       updateUI();
