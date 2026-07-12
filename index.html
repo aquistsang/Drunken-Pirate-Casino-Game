@@ -2038,7 +2038,7 @@
       bgImg.src = "background.png";
       bgVideo.src = "background.mp4";
       bgVideo.load();
-      bgWheelAppleVideo.src = "wheel-apple-cinematic.mp4";
+      bgWheelAppleVideo.src = "wheel-win-cinematic.mp4";
       bgWheelAppleVideo.load();
       bgLoseVideo.src = "lose-cinematic.mp4";
       bgLoseVideo.load();
@@ -3292,15 +3292,13 @@
         state.faceCensorTimer = null;
 
         let wheelVideoPromise = null;
-        if (outcome === "hit") {
-          wheelVideoPromise = startWheelAppleCinematicVideo();
-        }
 
         startFlight(outcome, {
           cinematic: true,
           wheelVideoPromise,
           onCinematicComplete: () => {
             stopWheelAppleCinematicVideo();
+            stopLoseCinematicVideo();
             showOverlay(finalType, finalTitle, finalSub || "", WHEEL_CINEMATIC_FINAL_MS);
             setTimeout(() => {
               state.wheelCinematic = false;
@@ -4023,7 +4021,7 @@
         ctx.clearRect(0, 0, layout.w, layout.h);
         drawBackground(layout);
         if (!isWheelBonusActive()) {
-          if (!state.loseVideoActive) {
+          if (!state.loseVideoActive && !state.wheelAppleVideoActive) {
             drawHumanCharacter(layout, dt, now);
             drawApple(layout);
             drawFaceMosaic(layout);
@@ -4071,6 +4069,7 @@
         state.appleDamaged = false;
         state.appleWobble = 0;
         stopLoseCinematicVideo();
+        stopWheelAppleCinematicVideo();
         clearTimeout(state.faceCensorTimer);
         state.faceCensorTimer = null;
         state.faceCensored = false;
@@ -4107,14 +4106,14 @@
         const total = timing.pullMs + timing.snapMs + timing.flightMs;
 
         // Hard failsafe: never leave Shoot locked if clocks desync
-        if (elapsed > total + timing.settleMs + 2500 && !f._completing && !f.loseVideoWaiting) {
+        if (elapsed > total + timing.settleMs + 2500 && !f._completing && !f.loseVideoWaiting && !f.wheelVideoWaiting) {
           f._completing = true;
           completeFlight(layout);
           return;
         }
 
         if (f.landed) {
-          if (!f.loseVideoWaiting && now - f.landTime >= timing.settleMs) {
+          if (!f.loseVideoWaiting && !f.wheelVideoWaiting && now - f.landTime >= timing.settleMs) {
             completeFlight(layout);
           }
           return;
@@ -4169,30 +4168,58 @@
         state.arrowTrail = [];
 
         if (f.outcome === "hit") {
-          state.appleWobble = 0.05;
-          state.appleDamaged = true;
-          playSfx(sfxAppleHit);
-          if (!f.cinematic) onStreakAppleLand(state.hits + 1);
-          spawnParticles(f.endX, f.endY, 24, ["#ffe08a", "#ff8a3a", "#6dca8a", "#fff", "#e8c547"]);
+          if (f.cinematic) {
+            f.wheelVideoWaiting = true;
+            playSfx(sfxAppleHit);
+            f.wheelVideoPromise = startWheelAppleCinematicVideo();
+            f.wheelVideoPromise.then(() => {
+              if (state.flight === f) completeFlight(layout);
+            });
+          } else {
+            state.appleWobble = 0.05;
+            state.appleDamaged = true;
+            playSfx(sfxAppleHit);
+            onStreakAppleLand(state.hits + 1);
+            spawnParticles(f.endX, f.endY, 24, ["#ffe08a", "#ff8a3a", "#6dca8a", "#fff", "#e8c547"]);
+          }
         } else {
           state.flinch = 1;
-          f.loseVideoWaiting = true;
-          if (!f.loseSfxPlayed) {
-            f.loseSfxPlayed = true;
-            clearTimeout(f.loseSfxTimer);
-            f.loseSfxTimer = setTimeout(() => playLoseExhale(), LOSE_SFX_DELAY_MS);
+          state.faceHurtVariant = pickLoseVariant();
+          if (f.cinematic) {
+            f.loseVideoWaiting = true;
+            if (!f.loseSfxPlayed) {
+              f.loseSfxPlayed = true;
+              clearTimeout(f.loseSfxTimer);
+              f.loseSfxTimer = setTimeout(() => playLoseExhale(), LOSE_SFX_DELAY_MS);
+            }
+            document.body.classList.add("flash-red");
+            setTimeout(() => document.body.classList.remove("flash-red"), 500);
+            f.loseVideoPromise = startLoseCinematicVideo();
+            f.loseVideoPromise.then(() => {
+              if (state.flight === f) completeFlight(layout);
+            });
+          } else {
+            state.faceCensored = true;
+            showOverlay("miss", "Try again", "", FACE_CENSOR_MS);
+            clearTimeout(state.faceCensorTimer);
+            state.faceCensorTimer = setTimeout(() => {
+              state.faceCensored = false;
+              state.faceHurt = true;
+              state.faceCensorTimer = null;
+            }, FACE_CENSOR_MS);
+            spawnThump(f.endX, f.endY);
+            if (!f.loseSfxPlayed) {
+              f.loseSfxPlayed = true;
+              clearTimeout(f.loseSfxTimer);
+              f.loseSfxTimer = setTimeout(() => playLoseExhale(), LOSE_SFX_DELAY_MS);
+            }
+            spawnParticles(layout.headX, layout.headY, 16, ["#c44", "#822", "#aaa", "#666"]);
+            document.body.classList.add("flash-red");
+            setTimeout(() => document.body.classList.remove("flash-red"), 500);
           }
-          document.body.classList.add("flash-red");
-          setTimeout(() => document.body.classList.remove("flash-red"), 500);
-
-          f.loseVideoPromise = startLoseCinematicVideo();
-          f.loseVideoPromise.then(() => {
-            if (state.flight === f) completeFlight(layout);
-          });
         }
 
-        // Wall-clock settle for hits only — lose rounds wait for the cinematic video
-        if (f.outcome === "hit") {
+        if (!f.cinematic) {
           clearTimeout(f.settleTimer);
           f.settleTimer = setTimeout(() => {
             if (state.flight === f) completeFlight(layout);
@@ -4211,12 +4238,15 @@
         state.arrowTrail = [];
         state.handPull = 0;
         state.animating = false;
-        stopLoseCinematicVideo();
-        state.faceCensored = false;
-        state.faceHurt = false;
-        state.faceHurtVariant = "patch";
-        clearTimeout(state.faceCensorTimer);
-        state.faceCensorTimer = null;
+        if (f.cinematic) {
+          stopLoseCinematicVideo();
+          stopWheelAppleCinematicVideo();
+          state.faceCensored = false;
+          state.faceHurt = false;
+          state.faceHurtVariant = "patch";
+          clearTimeout(state.faceCensorTimer);
+          state.faceCensorTimer = null;
+        }
 
         if (f.cinematic) {
           const done = f.onCinematicComplete;
