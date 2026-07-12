@@ -1,0 +1,8 @@
+{
+  "name": "drunken-pirate-casino-game",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "simulate": "node scripts/simulate-rtp.js"
+  }
+}
