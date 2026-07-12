@@ -1145,7 +1145,7 @@
 
     .help-carousel-viewport {
       overflow: hidden;
-      touch-action: pan-y;
+      touch-action: pan-x pinch-zoom;
       border-radius: 12px;
     }
 
@@ -1177,12 +1177,21 @@
       box-shadow: inset 0 0 0 1px rgba(255, 220, 150, 0.06);
     }
 
-    .help-slide-visual img {
+    .help-slide-visual img,
+    .help-slide-visual video {
       position: absolute;
       object-fit: contain;
       pointer-events: none;
       user-select: none;
       filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
+    }
+
+    .help-slide-visual video.help-art-video {
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: none;
     }
 
     .help-slide-visual--bet .help-art-bet {
@@ -1205,75 +1214,80 @@
 
     .help-slide-visual--bet .help-art-pirate {
       left: 50%;
-      bottom: -4%;
-      width: 52%;
+      bottom: 14%;
+      width: 64%;
+      max-height: 88%;
       transform: translateX(-50%);
+      object-position: center top;
+    }
+
+    .help-slide-visual--bet .help-art-pistol {
+      left: 50%;
+      bottom: -4%;
+      width: 46%;
+      transform: translateX(-50%);
+      z-index: 4;
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.65));
     }
 
     .help-slide-visual--fire .help-art-pirate {
       left: 50%;
-      bottom: -6%;
-      width: 48%;
+      bottom: -42%;
+      width: 78%;
       transform: translateX(-50%);
+      object-position: center top;
+      z-index: 1;
     }
 
     .help-slide-visual--fire .help-art-apple {
       left: 50%;
-      top: 8%;
-      width: 18%;
-      transform: translateX(-50%);
-    }
-
-    .help-slide-visual--fire .help-art-pistol {
-      left: 8%;
-      bottom: 6%;
+      top: 14%;
       width: 34%;
-      transform: rotate(-8deg);
+      transform: translateX(-50%);
+      z-index: 3;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.65));
     }
 
     .help-slide-visual--miss .help-art-pirate {
       left: 50%;
-      bottom: -6%;
-      width: 48%;
+      bottom: 8%;
+      width: 58%;
       transform: translateX(-50%);
-      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55)) saturate(0.75);
+      object-position: center top;
     }
 
-    .help-slide-visual--miss .help-art-burst {
-      left: 50%;
-      top: 18%;
-      width: 28%;
-      transform: translateX(-50%);
-      opacity: 0.9;
+    .help-slide-visual--streak {
+      background: #0a0604;
     }
 
-    .help-slide-visual--streak .help-art-apples {
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4%;
-      padding: 12% 8% 28%;
+    .help-slide-visual--streak .help-art-video {
+      object-position: center center;
     }
-
-    .help-slide-visual--streak .help-art-apples img {
-      position: static;
-      width: 14%;
-      transform: none;
-      animation: helpApplePop 1.8s ease-in-out infinite;
-    }
-
-    .help-slide-visual--streak .help-art-apples img:nth-child(2) { animation-delay: 0.15s; }
-    .help-slide-visual--streak .help-art-apples img:nth-child(3) { animation-delay: 0.3s; }
-    .help-slide-visual--streak .help-art-apples img:nth-child(4) { animation-delay: 0.45s; }
-    .help-slide-visual--streak .help-art-apples img:nth-child(5) { animation-delay: 0.6s; width: 18%; }
 
     .help-slide-visual--wheel .help-art-wheel {
       left: 50%;
-      top: 50%;
-      width: 62%;
+      top: 46%;
+      width: 58%;
       transform: translate(-50%, -50%);
       animation: helpWheelSpin 12s linear infinite;
+      z-index: 1;
+    }
+
+    .help-slide-visual--wheel .help-art-wheel-apple {
+      left: 7%;
+      bottom: 10%;
+      width: 24%;
+      z-index: 2;
+      animation: helpIconBob 2.2s ease-in-out infinite;
+    }
+
+    .help-slide-visual--wheel .help-art-wheel-skull {
+      right: 7%;
+      left: auto;
+      bottom: 10%;
+      width: 24%;
+      z-index: 2;
+      animation: helpIconBob 2.2s ease-in-out infinite 0.35s;
     }
 
     .help-slide-badge {
@@ -1318,9 +1332,9 @@
       50% { transform: translateY(-4px); }
     }
 
-    @keyframes helpApplePop {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
+    @keyframes helpIconBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
     }
 
     @keyframes helpWheelSpin {
@@ -1377,32 +1391,12 @@
     }
 
     .help-carousel-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      display: block;
       margin-top: 2px;
     }
 
-    .btn-help-nav {
-      min-height: 42px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: rgba(0, 0, 0, 0.32);
-      border: 1px solid rgba(232, 197, 71, 0.28);
-      color: var(--cream);
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      font-size: 0.78rem;
-    }
-
-    .btn-help-nav:disabled,
-    .btn-help-nav[hidden],
     .btn-modal[hidden] {
       display: none;
-    }
-
-    #btnCloseHelp {
-      grid-column: 1 / -1;
     }
 
     @media (min-width: 641px) {
@@ -1995,7 +1989,7 @@
   <div class="modal-backdrop" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
     <div class="modal modal-help-carousel">
       <h2 id="helpTitle">How to Play</h2>
-      <p class="sub">Swipe or tap through the tavern rules</p>
+      <p class="sub">Swipe through the tavern rules</p>
       <div class="help-carousel" id="helpCarousel">
         <div class="help-carousel-viewport" id="helpCarouselViewport">
           <div class="help-carousel-track" id="helpCarouselTrack">
@@ -2003,6 +1997,7 @@
               <div class="help-slide-visual help-slide-visual--bet">
                 <span class="help-slide-badge">Step 1</span>
                 <img class="help-art-pirate" src="character.png" alt="" width="240" height="320" />
+                <img class="help-art-pistol" src="pistol.png" alt="" width="200" height="130" />
                 <span class="help-art-bet" aria-hidden="true">$10</span>
               </div>
               <p class="help-slide-step">Step 1 of 5</p>
@@ -2012,37 +2007,29 @@
             <article class="help-slide" data-slide="1" aria-hidden="true">
               <div class="help-slide-visual help-slide-visual--fire">
                 <span class="help-slide-badge">Step 2</span>
-                <img class="help-art-apple" src="apple.png" alt="" width="96" height="96" />
                 <img class="help-art-pirate" src="character.png" alt="" width="240" height="320" />
-                <img class="help-art-pistol" src="pistol.png" alt="" width="180" height="120" />
+                <img class="help-art-apple" src="apple.png" alt="" width="120" height="120" />
                 <div class="help-slide-mults">
                   <span>1×</span><span>2×</span><span>4×</span><span>8×</span>
                 </div>
               </div>
               <p class="help-slide-step">Step 2 of 5</p>
-              <h3 class="help-slide-title">Fire at the apple</h3>
-              <p class="help-slide-body">Hit the apple on his head and your multiplier <strong>doubles</strong> each time: 1× → 2× → 4× → 8× … Cash out whenever you like.</p>
+              <h3 class="help-slide-title">Fire!</h3>
+              <p class="help-slide-body">Land a hit and your multiplier <strong>doubles</strong> each time: 1× → 2× → 4× → 8× … Cash out whenever you like.</p>
             </article>
             <article class="help-slide" data-slide="2" aria-hidden="true">
               <div class="help-slide-visual help-slide-visual--miss">
                 <span class="help-slide-badge">Step 3</span>
-                <img class="help-art-burst" src="muzzle.png" alt="" width="120" height="120" />
-                <img class="help-art-pirate" src="character-lose.png" alt="" width="240" height="320" />
+                <img class="help-art-pirate" src="character-lose-bandage.png" alt="" width="240" height="320" />
               </div>
               <p class="help-slide-step">Step 3 of 5</p>
               <h3 class="help-slide-title">Miss and lose your bet</h3>
-              <p class="help-slide-body">Hit his face instead of the apple and the round is over — you lose the bet for that round.</p>
+              <p class="help-slide-body">A bad shot ends the round — you lose the bet for that round.</p>
             </article>
             <article class="help-slide" data-slide="3" aria-hidden="true">
               <div class="help-slide-visual help-slide-visual--streak">
                 <span class="help-slide-badge">5 in a row</span>
-                <div class="help-art-apples" aria-hidden="true">
-                  <img src="apple.png" alt="" width="64" height="64" />
-                  <img src="apple.png" alt="" width="64" height="64" />
-                  <img src="apple.png" alt="" width="64" height="64" />
-                  <img src="apple.png" alt="" width="64" height="64" />
-                  <img src="apple-hit.png" alt="" width="80" height="80" />
-                </div>
+                <video class="help-art-video" src="help-streak-loop.mp4" autoplay loop muted playsinline preload="auto" aria-label="Five apple streak preview"></video>
               </div>
               <p class="help-slide-step">Step 4 of 5</p>
               <h3 class="help-slide-title">Land 5 apples in a row</h3>
@@ -2052,6 +2039,8 @@
               <div class="help-slide-visual help-slide-visual--wheel">
                 <span class="help-slide-badge">Bonus</span>
                 <img class="help-art-wheel" src="wheel.png" alt="" width="280" height="280" />
+                <img class="help-art-wheel-apple" src="wheel-apple.png" alt="" width="96" height="96" />
+                <img class="help-art-wheel-skull" src="wheel-skull.png" alt="" width="96" height="96" />
               </div>
               <p class="help-slide-step">Step 5 of 5</p>
               <h3 class="help-slide-title">Ship's Wheel (Bonus Spin)</h3>
@@ -2061,8 +2050,6 @@
         </div>
         <div class="help-carousel-dots" id="helpCarouselDots" role="tablist" aria-label="Tutorial slides"></div>
         <div class="help-carousel-actions">
-          <button type="button" class="btn-help-nav" id="btnHelpPrev" hidden>Back</button>
-          <button type="button" class="btn-help-nav" id="btnHelpNext">Next</button>
           <button type="button" class="btn-modal" id="btnCloseHelp" hidden>Got it — fire!</button>
         </div>
       </div>
@@ -3106,9 +3093,11 @@
       function openHelp(startSlide) {
         setHelpSlide(startSlide == null ? 0 : startSlide);
         helpModal.classList.add("open");
+        syncHelpSlideVideos();
       }
       function closeHelp() {
         helpModal.classList.remove("open");
+        pauseHelpSlideVideos();
         try { localStorage.setItem(HELP_KEY, "1"); } catch (e) { /* ignore */ }
         ensureMusicPlaying();
         ensureBgVideoPlaying();
@@ -3117,16 +3106,37 @@
       const helpCarouselTrack = document.getElementById("helpCarouselTrack");
       const helpCarouselViewport = document.getElementById("helpCarouselViewport");
       const helpCarouselDots = document.getElementById("helpCarouselDots");
-      const btnHelpPrev = document.getElementById("btnHelpPrev");
-      const btnHelpNext = document.getElementById("btnHelpNext");
       const btnCloseHelp = document.getElementById("btnCloseHelp");
       const helpSlides = helpCarouselTrack ? Array.from(helpCarouselTrack.querySelectorAll(".help-slide")) : [];
+      const helpSlideVideos = helpCarouselTrack ? Array.from(helpCarouselTrack.querySelectorAll(".help-art-video")) : [];
       let helpSlideIndex = 0;
       let helpTouchStartX = 0;
       let helpTouchStartY = 0;
 
       function isMobileViewport() {
         return window.matchMedia("(max-width: 640px)").matches;
+      }
+
+      function pauseHelpSlideVideos() {
+        helpSlideVideos.forEach((video) => {
+          try { video.pause(); } catch (e) { /* ignore */ }
+        });
+      }
+
+      function syncHelpSlideVideos() {
+        helpSlideVideos.forEach((video) => {
+          const slide = video.closest(".help-slide");
+          const active = slide && slide.getAttribute("aria-hidden") === "false";
+          if (!active) {
+            try { video.pause(); } catch (e) { /* ignore */ }
+            return;
+          }
+          try {
+            video.currentTime = 0;
+            const p = video.play();
+            if (p && typeof p.catch === "function") p.catch(() => {});
+          } catch (e) { /* ignore */ }
+        });
       }
 
       function setHelpSlide(index) {
@@ -3143,12 +3153,8 @@
           });
         }
         const isLast = helpSlideIndex === helpSlides.length - 1;
-        if (btnHelpPrev) {
-          btnHelpPrev.hidden = helpSlideIndex === 0;
-          btnHelpPrev.disabled = helpSlideIndex === 0;
-        }
-        if (btnHelpNext) btnHelpNext.hidden = isLast;
         if (btnCloseHelp) btnCloseHelp.hidden = !isLast;
+        if (helpModal.classList.contains("open")) syncHelpSlideVideos();
       }
 
       function initHelpCarousel() {
@@ -3163,9 +3169,6 @@
           helpCarouselDots.appendChild(dot);
         });
         setHelpSlide(0);
-
-        btnHelpPrev.addEventListener("click", () => setHelpSlide(helpSlideIndex - 1));
-        btnHelpNext.addEventListener("click", () => setHelpSlide(helpSlideIndex + 1));
 
         if (helpCarouselViewport) {
           helpCarouselViewport.addEventListener("touchstart", (e) => {
