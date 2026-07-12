@@ -185,6 +185,10 @@
       filter: brightness(1.1);
     }
 
+    .btn-cheat-mobile {
+      display: none;
+    }
+
     .audio-controls {
       display: flex;
       align-items: center;
@@ -1224,6 +1228,30 @@
         font-size: 0.46rem;
       }
 
+      .btn-cheat {
+        display: none;
+      }
+
+      .btn-cheat-mobile {
+        display: block;
+        width: 100%;
+        min-height: 28px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        background: rgba(80, 40, 120, 0.55);
+        border: 1px dashed rgba(200, 150, 255, 0.45);
+        color: rgba(230, 210, 255, 0.92);
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        line-height: 1.1;
+      }
+
+      .btn-cheat-mobile:active:not(:disabled) {
+        opacity: 1;
+        filter: brightness(1.08);
+      }
+
       /* Wheel modal — centered wheel with Take/Gamble row at bottom */
       .wheel-overlay {
         padding: 4px 6px;
@@ -1439,6 +1467,7 @@
         <button type="button" class="btn-cash" id="btnCash" disabled>💰 Cash Out</button>
       </div>
       <button type="button" class="btn-wheel-buyin" id="btnWheelBuyin" disabled>Ship's Wheel (Bonus Spin)</button>
+      <button type="button" class="btn-cheat-mobile" id="btnCheatFifthHitMobile" title="Dev: trigger 5th apple hit">⚡ 5th hit</button>
       <div class="controls-footer">
         <div class="audio-controls">
           <button type="button" class="btn-audio-toggle" id="btnMuteMusic" aria-pressed="false" title="Mute music">
@@ -4069,6 +4098,7 @@
 
       btnShoot.addEventListener("click", shoot);
       btnCheatFifthHit.addEventListener("click", () => { cheatFifthHit(); });
+      document.getElementById("btnCheatFifthHitMobile").addEventListener("click", () => { cheatFifthHit(); });
       btnCash.addEventListener("click", cashOut);
       btnWheelTake.addEventListener("click", takeWheelLoot);
       btnWheelGamble.addEventListener("click", gambleWheel);
