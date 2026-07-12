@@ -1263,15 +1263,26 @@
       filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.65));
     }
 
-    .help-slide-visual--miss .help-art-pirate {
+    .help-slide-visual--miss .help-miss-frame {
+      position: absolute;
       left: 50%;
-      top: 10%;
-      bottom: auto;
-      width: 78%;
-      height: 46%;
+      bottom: 5%;
+      width: 76%;
+      height: 50%;
       transform: translateX(-50%);
-      object-fit: cover;
-      object-position: center top;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .help-slide-visual--miss .help-miss-frame .help-art-pirate {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: auto;
+      transform: none;
+      object-fit: initial;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
     }
 
     .help-slide-visual--streak {
@@ -2044,7 +2055,9 @@
             <article class="help-slide" data-slide="2" aria-hidden="true">
               <div class="help-slide-visual help-slide-visual--miss">
                 <span class="help-slide-badge">Step 3</span>
-                <img class="help-art-pirate" src="character-lose-bandage.png" alt="" width="240" height="320" />
+                <div class="help-miss-frame">
+                  <img class="help-art-pirate" src="character-lose-bandage.png" alt="" width="240" height="320" />
+                </div>
               </div>
               <p class="help-slide-step">Step 3 of 5</p>
               <h3 class="help-slide-title">Miss and lose your bet</h3>
