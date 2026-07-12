@@ -353,19 +353,16 @@
       flex: 1 1 auto;
       min-height: 0;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      container-type: size;
     }
 
     .scene-stage {
       position: relative;
-      width: min(100cqw, calc(100cqh * 5 / 4));
-      height: min(100cqh, calc(100cqw * 4 / 5));
-      flex: 0 0 auto;
+      width: 100%;
+      flex: 1 1 auto;
       min-height: 0;
       max-height: 100%;
-      max-width: 100%;
       aspect-ratio: 5 / 4;
       container-type: size;
       border-radius: 14px;
@@ -780,7 +777,7 @@
 
     @media (max-width: 480px) {
       .wheel-actions.streak {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
       }
     }
 
@@ -800,16 +797,23 @@
       min-height: 44px;
       padding: 12px;
       border-radius: 10px;
-      background: linear-gradient(180deg, #c44 0%, #8a2020 55%, #5a1010 100%);
-      border: 2px solid rgba(255, 160, 140, 0.35);
-      color: #ffe8e0;
+      background: linear-gradient(180deg, #6b4a28 0%, #3d2818 55%, #2a1a10 100%);
+      border: 2px solid rgba(232, 197, 71, 0.35);
+      color: var(--gold-bright);
       font-weight: 900;
       letter-spacing: 0.1em;
       font-size: 0.78rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 3px 0 #1a0e08, 0 6px 14px rgba(0, 0, 0, 0.35);
+      transition: filter 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .btn-wheel-take:hover:not(:disabled),
-    .btn-wheel-gamble:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-wheel-gamble:not(:disabled) {
+      animation: wheelBuyinGlow 2.6s ease-in-out infinite;
+    }
+
+    .btn-wheel-take:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-wheel-gamble:hover:not(:disabled) { filter: brightness(1.12); }
 
     .btn-wheel-take:disabled,
     .btn-wheel-gamble:disabled {
@@ -1059,146 +1063,272 @@
 
     @media (max-width: 480px) {
       .action-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
       }
 
       .bet-row {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
       }
 
       .quick-bets {
-        width: 100%;
-        justify-content: stretch;
+        width: auto;
+        justify-content: flex-end;
       }
 
       .btn-quick {
-        flex: 1;
+        flex: 0 0 auto;
       }
     }
 
-    /* Fit full UI in phone viewport — scene fills leftover space, nothing clipped */
-    @media (max-width: 640px), (max-height: 820px) {
+    /* Phones only — maximize game scene, compact controls */
+    @media (max-width: 640px) {
       .pub-roof {
-        height: clamp(10px, 1.6dvh, 18px);
+        height: clamp(8px, 1.2dvh, 14px);
       }
 
       .wrap {
-        padding: 2px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-        gap: 4px;
+        padding: 1px 6px calc(4px + env(safe-area-inset-bottom, 0px));
+        gap: 3px;
       }
 
       header.brand {
-        padding: 1px 40px 2px;
+        padding: 0 34px 1px;
       }
 
-      .brand-eyebrow { display: none; }
-
       .brand h1 {
-        font-size: clamp(0.95rem, 3.2vw + 0.35rem, 1.25rem);
-        letter-spacing: 0.1em;
+        font-size: clamp(0.88rem, 3vw + 0.3rem, 1.1rem);
+        letter-spacing: 0.08em;
+        line-height: 1.1;
       }
 
       .btn-help {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
-      }
-
-      .controls-footer {
-        justify-content: space-between;
-      }
-
-      .rtp-info {
-        font-size: 0.52rem;
-      }
-
-      .btn-audio-toggle {
-        min-height: 34px;
-        padding: 5px 9px;
-        font-size: 0.68rem;
+        width: 30px;
+        height: 30px;
+        font-size: 0.82rem;
       }
 
       .panel {
-        padding: 6px 8px;
-        border-radius: 10px;
+        padding: 4px 6px;
+        border-radius: 8px;
       }
 
-      .stats-row { gap: 4px; }
+      .stats-row { gap: 2px; }
 
-      .stat .label { font-size: 0.5rem; margin-bottom: 1px; }
+      .stat .label {
+        font-size: 0.45rem;
+        margin-bottom: 0;
+      }
 
       .stat .value {
-        font-size: clamp(0.85rem, 2.8vw, 1rem);
+        font-size: clamp(0.76rem, 2.6vw, 0.9rem);
       }
 
       .result-banner {
-        margin-top: 4px;
-        min-height: 30px;
-        padding: 5px 8px;
+        margin-top: 2px;
+        min-height: 22px;
+        padding: 3px 6px;
       }
 
       .result-banner .result-title {
-        font-size: 0.8rem;
+        font-size: 0.72rem;
+      }
+
+      .result-banner .result-sub {
+        font-size: 0.62rem;
       }
 
       .scene-slot {
-        flex: 1 1 auto;
-        min-height: 120px;
+        flex: 1 1 0;
+        min-height: 0;
       }
 
       .scene-stage {
+        aspect-ratio: unset;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
         border-width: 2px;
-        border-radius: 10px;
+        border-radius: 8px;
       }
 
-      .controls { gap: 4px; }
+      .controls { gap: 3px; }
 
-      .bet-label { margin-bottom: 1px; }
+      .bet-label { display: none; }
 
-      #betInput,
+      .bet-row {
+        gap: 4px;
+        flex-wrap: nowrap;
+      }
+
+      #betInput {
+        min-height: 30px;
+        padding: 4px 6px 4px 18px;
+        font-size: 0.84rem;
+        border-radius: 7px;
+      }
+
+      .bet-input-wrap::before {
+        left: 8px;
+        font-size: 0.78rem;
+      }
+
       .btn-quick {
-        min-height: 36px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        font-size: 0.9rem;
+        min-width: 32px;
+        min-height: 30px;
+        padding: 4px 6px;
+        font-size: 0.74rem;
+        border-radius: 7px;
       }
 
-      .btn-quick {
-        min-width: 38px;
-        padding-left: 8px;
-        padding-right: 8px;
-      }
+      .quick-bets { gap: 3px; }
 
       .action-row {
-        gap: 5px;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
       }
 
       .btn-shoot,
       .btn-cash {
-        min-height: 36px;
-        padding: 7px 8px;
-        font-size: 0.8rem;
-        letter-spacing: 0.04em;
-        border-radius: 9px;
-        box-shadow: 0 3px 0 #6a1e08, 0 5px 12px rgba(255, 80, 20, 0.28);
+        min-height: 32px;
+        padding: 5px 6px;
+        font-size: 0.74rem;
+        letter-spacing: 0.03em;
+        border-radius: 8px;
+        border-width: 1px;
+        box-shadow: 0 2px 0 #6a1e08, 0 4px 10px rgba(255, 80, 20, 0.22);
       }
 
       .btn-cash {
-        box-shadow: 0 3px 0 #143d28, 0 5px 12px rgba(46, 125, 79, 0.28);
+        box-shadow: 0 2px 0 #143d28, 0 4px 10px rgba(46, 125, 79, 0.22);
       }
 
       .btn-wheel-buyin {
-        min-height: 34px;
-        padding: 7px 10px;
-        font-size: 0.72rem;
+        min-height: 30px;
+        padding: 5px 8px;
+        font-size: 0.65rem;
+        border-radius: 8px;
       }
 
       .controls-footer {
-        min-height: 30px;
+        min-height: 24px;
+        gap: 4px;
+      }
+
+      .btn-audio-toggle {
+        min-height: 26px;
+        padding: 3px 7px;
+        font-size: 0.58rem;
+      }
+
+      .rtp-info {
+        font-size: 0.46rem;
+      }
+
+      /* Wheel modal — shrink wheel, pin Take/Gamble side-by-side at bottom */
+      .wheel-overlay {
+        padding: 2px 4px 0;
+        justify-content: flex-end;
+      }
+
+      .wheel-overlay-inner {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        justify-content: flex-end;
+      }
+
+      .wheel-overlay-main {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        min-height: 0;
+        padding-bottom: 38px;
+        justify-content: flex-start;
+        gap: 0;
+        overflow: hidden;
+      }
+
+      .wheel-overlay h2 {
+        font-size: clamp(0.72rem, 3.8cqw, 0.88rem);
+        margin-bottom: 0;
+        line-height: 1.15;
+        flex: 0 0 auto;
+      }
+
+      .wheel-overlay .sub {
+        font-size: 0.58rem;
+        margin-bottom: 2px;
+        line-height: 1.2;
+        flex: 0 0 auto;
+      }
+
+      .wheel-overlay .wheel-streak-info {
+        font-size: 0.58rem;
+        margin-bottom: 2px;
+        flex: 0 0 auto;
+      }
+
+      .wheel-overlay .wheel-result-reveal {
+        min-height: 1.2rem;
+        font-size: clamp(1.1rem, 6vw, 1.5rem);
+        margin-bottom: 2px;
+        flex: 0 0 auto;
+      }
+
+      .wheel-overlay .wheel-stage {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: min(72cqw, 100%);
+        height: auto;
+        max-height: min(30cqh, 150px);
+        aspect-ratio: 1;
+        margin: 0 auto;
+      }
+
+      .wheel-overlay .wheel-actions,
+      .wheel-overlay .wheel-actions.streak {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 15;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        width: 100%;
+        margin: 0;
+        padding: 4px 4px 3px;
+        background: linear-gradient(to top, rgba(8, 4, 2, 0.97) 75%, rgba(8, 4, 2, 0));
+      }
+
+      .wheel-overlay .btn-wheel-take,
+      .wheel-overlay .btn-wheel-gamble {
+        min-height: 32px;
+        padding: 5px 4px;
+        font-size: 0.66rem;
+        letter-spacing: 0.04em;
+        border-radius: 8px;
+        line-height: 1.1;
+      }
+
+      .wheel-overlay .wheel-pointer {
+        border-left-width: 12px;
+        border-right-width: 12px;
+        border-top-width: 22px;
+        top: -7px;
       }
     }
 
-    @media (max-height: 620px) {
+    /* Short viewports — extra squeeze without touching desktop */
+    @media (max-width: 640px) and (max-height: 820px) {
+      .controls-footer {
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 640px) and (max-height: 620px) {
       .pub-roof { display: none; }
 
       .stats-row {
@@ -1206,26 +1336,34 @@
       }
 
       .result-banner {
-        min-height: 24px;
-        margin-top: 2px;
-        padding: 4px 8px;
+        min-height: 20px;
+        margin-top: 1px;
+        padding: 2px 6px;
       }
 
       .result-banner .result-title {
-        font-size: 0.72rem;
+        font-size: 0.66rem;
       }
 
-      .scene-slot { min-height: 100px; }
-
       .panel {
-        padding: 5px 8px;
+        padding: 3px 6px;
       }
 
       .btn-shoot,
       .btn-cash {
-        min-height: 34px;
-        padding: 6px 8px;
-        font-size: 0.76rem;
+        min-height: 30px;
+        padding: 4px 6px;
+        font-size: 0.7rem;
+      }
+
+      .wheel-overlay-main {
+        padding-bottom: 34px;
+      }
+
+      .wheel-overlay .btn-wheel-take,
+      .wheel-overlay .btn-wheel-gamble {
+        min-height: 30px;
+        font-size: 0.62rem;
       }
     }
   </style>
@@ -1431,6 +1569,7 @@
       const SETTLE_MS = 500;
       const OVERLAY_MS = 1400;
       const FACE_CENSOR_MS = 1280;
+      const LOSE_SFX_DELAY_MS = 500;
       const HELP_KEY = "drunkenArcherHelpSeen";
       const CLIENT_SEED_KEY = "drunkenPirateClientSeed";
 
@@ -3164,7 +3303,7 @@
       function drawBackground(layout) {
         const { w, h } = layout;
         const anchorBottom = typeof window !== "undefined"
-          && window.matchMedia("(max-width: 640px), (max-height: 820px)").matches;
+          && window.matchMedia("(max-width: 640px)").matches;
 
         function drawCover(img, iw, ih) {
           const scale = Math.max(w / Math.max(iw, 1), h / Math.max(ih, 1));
@@ -3602,6 +3741,10 @@
 
       function startFlight(outcome, flightOpts) {
         const opts = flightOpts || {};
+        if (state.flight) {
+          if (state.flight.settleTimer) clearTimeout(state.flight.settleTimer);
+          if (state.flight.loseSfxTimer) clearTimeout(state.flight.loseSfxTimer);
+        }
         const layout = sceneLayout();
         const { endX, endY, endAngle } = computeFlightTarget(outcome, layout);
 
@@ -3618,7 +3761,6 @@
         unlockSfx();
         playSfx(sfxShot);
         if (outcome !== "hit") {
-          playLoseExhale();
           state.faceCensored = true;
           state.flinch = 1;
           state.faceHurtVariant = pickLoseVariant();
@@ -3750,6 +3892,8 @@
             }, FACE_CENSOR_MS);
           }
           spawnThump(f.endX, f.endY);
+          clearTimeout(f.loseSfxTimer);
+          f.loseSfxTimer = setTimeout(() => playLoseExhale(), LOSE_SFX_DELAY_MS);
           spawnParticles(layout.headX, layout.headY, 16, ["#c44", "#822", "#aaa", "#666"]);
           document.body.classList.add("flash-red");
           setTimeout(() => document.body.classList.remove("flash-red"), 500);
@@ -3766,6 +3910,7 @@
         const f = state.flight;
         if (!f) return;
         if (f.settleTimer) clearTimeout(f.settleTimer);
+        if (f.loseSfxTimer) clearTimeout(f.loseSfxTimer);
         const wasSlowMo = !!f.slowMo;
 
         state.flight = null;
