@@ -1845,6 +1845,14 @@
       bgWheelAppleVideo.setAttribute("playsinline", "");
       bgWheelAppleVideo.setAttribute("webkit-playsinline", "");
       bgWheelAppleVideo.preload = "auto";
+      const bgLoseVideo = document.createElement("video");
+      bgLoseVideo.muted = true;
+      bgLoseVideo.defaultMuted = true;
+      bgLoseVideo.loop = false;
+      bgLoseVideo.playsInline = true;
+      bgLoseVideo.setAttribute("playsinline", "");
+      bgLoseVideo.setAttribute("webkit-playsinline", "");
+      bgLoseVideo.preload = "auto";
       let charSprite = null;
       let charBlinkSprite = null;
       let charHitSprite = null;
@@ -1858,6 +1866,7 @@
       let bgSprite = null;
       let bgVideoReady = false;
       let wheelAppleVideoReady = false;
+      let loseVideoReady = false;
       let assetsReady = { character: false, characterBlink: false, characterHit: false, characterLose: false, characterLoseBandage: false, characterLoseBruise: false, bow: false, muzzle: false, apple: false, appleHit: false, bg: false };
       // Tavern background already includes the character — don't draw character.png on top
       const SCENE_HAS_CHARACTER = false;
@@ -2012,6 +2021,10 @@
         wheelAppleVideoReady = true;
       });
       bgWheelAppleVideo.addEventListener("error", () => { wheelAppleVideoReady = false; });
+      bgLoseVideo.addEventListener("loadeddata", () => {
+        loseVideoReady = true;
+      });
+      bgLoseVideo.addEventListener("error", () => { loseVideoReady = false; });
       characterImg.src = "character.png";
       characterBlinkImg.src = "character-blink.png";
       characterHitImg.src = "character-hit.png";
@@ -2027,6 +2040,8 @@
       bgVideo.load();
       bgWheelAppleVideo.src = "wheel-apple-cinematic.mp4";
       bgWheelAppleVideo.load();
+      bgLoseVideo.src = "lose-cinematic.mp4";
+      bgLoseVideo.load();
 
       const wheelImg = new Image();
       const wheelAppleImg = new Image();
@@ -2620,6 +2635,7 @@
         wheelIntro: false,
         wheelIntroTimer: null,
         wheelAppleVideoActive: false,
+        loseVideoActive: false,
         lastTime: 0,
         dpr: 1
       };
@@ -3262,6 +3278,7 @@
         state.wheelSpinning = false;
         state.wheelCinematic = true;
         stopWheelAppleCinematicVideo();
+        stopLoseCinematicVideo();
 
         state.faceCensored = false;
         state.faceHurt = false;
@@ -3431,6 +3448,12 @@
         stopStreakTensionLayer();
         stopClapsLoop();
         stopWheelAppleCinematicVideo();
+        stopLoseCinematicVideo();
+        state.faceCensored = false;
+        state.faceHurt = false;
+        state.faceHurtVariant = "patch";
+        clearTimeout(state.faceCensorTimer);
+        state.faceCensorTimer = null;
         // Keep face censor through the umph SFX — cleared by timer / next shot
         updateUI();
       }
@@ -3534,8 +3557,48 @@
         } catch (e) { /* ignore */ }
       }
 
+      function startLoseCinematicVideo() {
+        if (!loseVideoReady) return Promise.resolve();
+
+        state.loseVideoActive = true;
+        unlockSfx();
+        return new Promise((resolve) => {
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(fallbackTimer);
+            bgLoseVideo.removeEventListener("ended", onEnded);
+            resolve();
+          };
+          const onEnded = () => finish();
+          const durSec = Number.isFinite(bgLoseVideo.duration) && bgLoseVideo.duration > 0
+            ? bgLoseVideo.duration
+            : 6;
+          const fallbackTimer = setTimeout(finish, durSec * 1000 + 500);
+
+          bgLoseVideo.addEventListener("ended", onEnded, { once: true });
+          try {
+            bgLoseVideo.pause();
+            bgLoseVideo.currentTime = 0;
+            const p = bgLoseVideo.play();
+            if (p && typeof p.catch === "function") p.catch(() => finish());
+          } catch (e) {
+            finish();
+          }
+        });
+      }
+
+      function stopLoseCinematicVideo() {
+        state.loseVideoActive = false;
+        try {
+          bgLoseVideo.pause();
+          bgLoseVideo.currentTime = 0;
+        } catch (e) { /* ignore */ }
+      }
+
       function updateCharacterBlink(now) {
-        if (state.faceHurt || state.appleDamaged || state.faceCensored) return;
+        if (state.faceHurt || state.appleDamaged || state.faceCensored || state.loseVideoActive) return;
         if (!state.blinkNextAt) state.blinkNextAt = now + 1400 + Math.random() * 900;
         if (!state.blinkEnd && now >= state.blinkNextAt) {
           state.eyesOpen = false;
@@ -3567,6 +3630,14 @@
           && bgWheelAppleVideo.readyState >= 2
           && bgWheelAppleVideo.videoWidth > 0) {
           drawCover(bgWheelAppleVideo, bgWheelAppleVideo.videoWidth, bgWheelAppleVideo.videoHeight);
+          return;
+        }
+
+        if (state.loseVideoActive
+          && loseVideoReady
+          && bgLoseVideo.readyState >= 2
+          && bgLoseVideo.videoWidth > 0) {
+          drawCover(bgLoseVideo, bgLoseVideo.videoWidth, bgLoseVideo.videoHeight);
           return;
         }
 
@@ -3952,10 +4023,11 @@
         ctx.clearRect(0, 0, layout.w, layout.h);
         drawBackground(layout);
         if (!isWheelBonusActive()) {
-          drawHumanCharacter(layout, dt, now);
-          drawApple(layout);
-          drawFaceMosaic(layout);
-          drawStuckArrows(layout);
+          if (!state.loseVideoActive) {
+            drawHumanCharacter(layout, dt, now);
+            drawApple(layout);
+            drawFaceMosaic(layout);
+          }
           drawPOVHand(layout, state.handPull, !!state.arrow);
           drawFlyingArrow(layout);
           drawParticles(dt);
@@ -3998,6 +4070,7 @@
 
         state.appleDamaged = false;
         state.appleWobble = 0;
+        stopLoseCinematicVideo();
         clearTimeout(state.faceCensorTimer);
         state.faceCensorTimer = null;
         state.faceCensored = false;
@@ -4034,14 +4107,14 @@
         const total = timing.pullMs + timing.snapMs + timing.flightMs;
 
         // Hard failsafe: never leave Shoot locked if clocks desync
-        if (elapsed > total + timing.settleMs + 2500 && !f._completing) {
+        if (elapsed > total + timing.settleMs + 2500 && !f._completing && !f.loseVideoWaiting) {
           f._completing = true;
           completeFlight(layout);
           return;
         }
 
         if (f.landed) {
-          if (now - f.landTime >= timing.settleMs) {
+          if (!f.loseVideoWaiting && now - f.landTime >= timing.settleMs) {
             completeFlight(layout);
           }
           return;
@@ -4103,33 +4176,28 @@
           spawnParticles(f.endX, f.endY, 24, ["#ffe08a", "#ff8a3a", "#6dca8a", "#fff", "#e8c547"]);
         } else {
           state.flinch = 1;
-          state.faceHurtVariant = pickLoseVariant();
-          state.faceCensored = true;
-          if (!f.cinematic) {
-            showOverlay("miss", "Try again", "", FACE_CENSOR_MS);
-          }
-          clearTimeout(state.faceCensorTimer);
-          state.faceCensorTimer = setTimeout(() => {
-            state.faceCensored = false;
-            state.faceHurt = true;
-            state.faceCensorTimer = null;
-          }, FACE_CENSOR_MS);
-          spawnThump(f.endX, f.endY);
+          f.loseVideoWaiting = true;
           if (!f.loseSfxPlayed) {
             f.loseSfxPlayed = true;
             clearTimeout(f.loseSfxTimer);
             f.loseSfxTimer = setTimeout(() => playLoseExhale(), LOSE_SFX_DELAY_MS);
           }
-          spawnParticles(layout.headX, layout.headY, 16, ["#c44", "#822", "#aaa", "#666"]);
           document.body.classList.add("flash-red");
           setTimeout(() => document.body.classList.remove("flash-red"), 500);
+
+          f.loseVideoPromise = startLoseCinematicVideo();
+          f.loseVideoPromise.then(() => {
+            if (state.flight === f) completeFlight(layout);
+          });
         }
 
-        // Wall-clock settle so completion never depends solely on RAF timestamps
-        clearTimeout(f.settleTimer);
-        f.settleTimer = setTimeout(() => {
-          if (state.flight === f) completeFlight(layout);
-        }, timing.settleMs);
+        // Wall-clock settle for hits only — lose rounds wait for the cinematic video
+        if (f.outcome === "hit") {
+          clearTimeout(f.settleTimer);
+          f.settleTimer = setTimeout(() => {
+            if (state.flight === f) completeFlight(layout);
+          }, timing.settleMs);
+        }
       }
 
       function completeFlight(layout) {
@@ -4143,6 +4211,12 @@
         state.arrowTrail = [];
         state.handPull = 0;
         state.animating = false;
+        stopLoseCinematicVideo();
+        state.faceCensored = false;
+        state.faceHurt = false;
+        state.faceHurtVariant = "patch";
+        clearTimeout(state.faceCensorTimer);
+        state.faceCensorTimer = null;
 
         if (f.cinematic) {
           const done = f.onCinematicComplete;
@@ -4153,10 +4227,8 @@
             } else {
               setTimeout(finishHitCinematic, 450);
             }
-          } else {
-            const shotMs = PULL_MS + SNAP_MS + FLIGHT_MS + SETTLE_MS;
-            const wait = Math.max(0, FACE_CENSOR_MS - shotMs) + WHEEL_CINEMATIC_HURT_BEAT_MS;
-            setTimeout(() => { if (done) done(); }, wait);
+          } else if (done) {
+            done();
           }
           updateUI();
           return;
