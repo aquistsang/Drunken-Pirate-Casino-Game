@@ -1252,9 +1252,9 @@
         filter: brightness(1.08);
       }
 
-      /* Wheel modal — centered wheel with Take/Gamble row at bottom */
+      /* Wheel modal — large centered wheel, actions at bottom */
       .wheel-overlay {
-        padding: 4px 6px;
+        padding: 0;
         justify-content: center;
       }
 
@@ -1267,65 +1267,90 @@
       }
 
       .wheel-overlay-main {
-        display: grid;
-        grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
-        align-items: center;
-        justify-items: center;
+        position: relative;
+        display: block;
         height: 100%;
         width: 100%;
         min-height: 0;
-        padding-bottom: 0;
-        gap: 3px;
         overflow: hidden;
       }
 
       .wheel-overlay h2 {
+        position: relative;
+        z-index: 2;
         font-size: clamp(0.72rem, 3.8cqw, 0.9rem);
         margin-bottom: 0;
         line-height: 1.15;
         width: 100%;
+        padding: 4px 6px 0;
+        text-align: center;
       }
 
       .wheel-overlay .sub {
+        position: relative;
+        z-index: 2;
         font-size: 0.6rem;
         margin-bottom: 0;
         line-height: 1.2;
         width: 100%;
+        padding: 0 6px;
+        text-align: center;
       }
 
       .wheel-overlay .wheel-streak-info {
+        position: relative;
+        z-index: 2;
         font-size: 0.6rem;
         margin-bottom: 0;
         width: 100%;
+        padding: 0 6px;
+        text-align: center;
       }
 
       .wheel-overlay .wheel-result-reveal {
+        position: relative;
+        z-index: 2;
         min-height: 1.2rem;
         font-size: clamp(1.1rem, 6vw, 1.5rem);
         margin-bottom: 0;
         width: 100%;
+        padding: 0 6px;
+        text-align: center;
       }
 
       .wheel-overlay .wheel-stage {
-        place-self: center;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
         flex: none;
-        width: min(86cqw, 50cqh, 240px);
-        height: min(86cqw, 50cqh, 240px);
+        width: min(94cqw, 72cqh, 320px);
+        height: min(94cqw, 72cqh, 320px);
         max-width: 100%;
-        margin: auto;
+        margin: 0;
+      }
+
+      #wheelModalInner.wheel-spinning .wheel-stage,
+      #wheelModalInner.wheel-revealing .wheel-stage {
+        width: min(96cqw, 80cqh, 360px);
+        height: min(96cqw, 80cqh, 360px);
       }
 
       .wheel-overlay .wheel-actions,
       .wheel-overlay .wheel-actions.streak {
-        position: static;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 4px;
         width: 100%;
         margin: 0;
-        padding: 2px 0 0;
-        align-self: end;
-        background: none;
+        padding: 4px 6px 6px;
+        background: linear-gradient(to top, rgba(8, 4, 2, 0.92) 70%, rgba(8, 4, 2, 0));
       }
 
       .wheel-overlay .btn-wheel-take,
@@ -1339,10 +1364,10 @@
       }
 
       .wheel-overlay .wheel-pointer {
-        border-left-width: 12px;
-        border-right-width: 12px;
-        border-top-width: 22px;
-        top: -7px;
+        border-left-width: 14px;
+        border-right-width: 14px;
+        border-top-width: 26px;
+        top: -8px;
       }
     }
 
@@ -1382,8 +1407,14 @@
       }
 
       .wheel-overlay .wheel-stage {
-        width: min(84cqw, 44cqh, 200px);
-        height: min(84cqw, 44cqh, 200px);
+        width: min(92cqw, 68cqh, 280px);
+        height: min(92cqw, 68cqh, 280px);
+      }
+
+      #wheelModalInner.wheel-spinning .wheel-stage,
+      #wheelModalInner.wheel-revealing .wheel-stage {
+        width: min(94cqw, 74cqh, 300px);
+        height: min(94cqw, 74cqh, 300px);
       }
 
       .wheel-overlay .btn-wheel-take,
