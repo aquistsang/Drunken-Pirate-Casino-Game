@@ -353,16 +353,19 @@
       flex: 1 1 auto;
       min-height: 0;
       display: flex;
-      align-items: stretch;
+      align-items: center;
       justify-content: center;
+      container-type: size;
     }
 
     .scene-stage {
       position: relative;
-      width: 100%;
-      flex: 1 1 auto;
+      width: min(100cqw, calc(100cqh * 5 / 4));
+      height: min(100cqh, calc(100cqw * 4 / 5));
+      flex: 0 0 auto;
       min-height: 0;
       max-height: 100%;
+      max-width: 100%;
       aspect-ratio: 5 / 4;
       container-type: size;
       border-radius: 14px;
@@ -1140,37 +1143,58 @@
 
       .scene-slot {
         flex: 1 1 auto;
-        min-height: 140px;
+        min-height: 120px;
       }
 
       .scene-stage {
-        aspect-ratio: unset;
-        width: 100%;
-        height: 100%;
-        min-height: 0;
         border-width: 2px;
         border-radius: 10px;
       }
 
-      .controls { gap: 5px; }
+      .controls { gap: 4px; }
 
-      .bet-label { margin-bottom: 2px; }
+      .bet-label { margin-bottom: 1px; }
 
       #betInput,
       .btn-quick {
-        min-height: 40px;
-        padding-top: 8px;
-        padding-bottom: 8px;
+        min-height: 36px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        font-size: 0.9rem;
+      }
+
+      .btn-quick {
+        min-width: 38px;
+        padding-left: 8px;
+        padding-right: 8px;
       }
 
       .action-row {
-        gap: 6px;
+        gap: 5px;
       }
 
       .btn-shoot,
       .btn-cash {
-        min-height: 44px;
-        font-size: 0.95rem;
+        min-height: 36px;
+        padding: 7px 8px;
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+        border-radius: 9px;
+        box-shadow: 0 3px 0 #6a1e08, 0 5px 12px rgba(255, 80, 20, 0.28);
+      }
+
+      .btn-cash {
+        box-shadow: 0 3px 0 #143d28, 0 5px 12px rgba(46, 125, 79, 0.28);
+      }
+
+      .btn-wheel-buyin {
+        min-height: 34px;
+        padding: 7px 10px;
+        font-size: 0.72rem;
+      }
+
+      .controls-footer {
+        min-height: 30px;
       }
     }
 
@@ -1182,14 +1206,26 @@
       }
 
       .result-banner {
-        min-height: 26px;
+        min-height: 24px;
         margin-top: 2px;
+        padding: 4px 8px;
       }
 
-      .scene-slot { min-height: 110px; }
+      .result-banner .result-title {
+        font-size: 0.72rem;
+      }
 
-      .action-row {
-        grid-template-columns: 1fr 1fr;
+      .scene-slot { min-height: 100px; }
+
+      .panel {
+        padding: 5px 8px;
+      }
+
+      .btn-shoot,
+      .btn-cash {
+        min-height: 34px;
+        padding: 6px 8px;
+        font-size: 0.76rem;
       }
     }
   </style>
@@ -2852,12 +2888,14 @@
         clearTimeout(state.faceCensorTimer);
         state.faceCensorTimer = null;
 
+        let wheelVideoPromise = null;
         if (outcome === "hit") {
-          startWheelAppleCinematicVideo();
+          wheelVideoPromise = startWheelAppleCinematicVideo();
         }
 
         startFlight(outcome, {
           cinematic: true,
+          wheelVideoPromise,
           onCinematicComplete: () => {
             stopWheelAppleCinematicVideo();
             showOverlay(finalType, finalTitle, finalSub || "", WHEEL_CINEMATIC_FINAL_MS);
@@ -3070,15 +3108,35 @@
       }
 
       function startWheelAppleCinematicVideo() {
-        if (!wheelAppleVideoReady) return;
+        if (!wheelAppleVideoReady) return Promise.resolve();
+
         state.wheelAppleVideoActive = true;
         unlockSfx();
-        try {
-          bgWheelAppleVideo.pause();
-          bgWheelAppleVideo.currentTime = 0;
-          const p = bgWheelAppleVideo.play();
-          if (p && typeof p.catch === "function") p.catch(() => {});
-        } catch (e) { /* ignore */ }
+        return new Promise((resolve) => {
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(fallbackTimer);
+            bgWheelAppleVideo.removeEventListener("ended", onEnded);
+            resolve();
+          };
+          const onEnded = () => finish();
+          const durSec = Number.isFinite(bgWheelAppleVideo.duration) && bgWheelAppleVideo.duration > 0
+            ? bgWheelAppleVideo.duration
+            : 8;
+          const fallbackTimer = setTimeout(finish, durSec * 1000 + 500);
+
+          bgWheelAppleVideo.addEventListener("ended", onEnded, { once: true });
+          try {
+            bgWheelAppleVideo.pause();
+            bgWheelAppleVideo.currentTime = 0;
+            const p = bgWheelAppleVideo.play();
+            if (p && typeof p.catch === "function") p.catch(() => finish());
+          } catch (e) {
+            finish();
+          }
+        });
       }
 
       function stopWheelAppleCinematicVideo() {
@@ -3105,13 +3163,15 @@
 
       function drawBackground(layout) {
         const { w, h } = layout;
+        const anchorBottom = typeof window !== "undefined"
+          && window.matchMedia("(max-width: 640px), (max-height: 820px)").matches;
 
         function drawCover(img, iw, ih) {
           const scale = Math.max(w / Math.max(iw, 1), h / Math.max(ih, 1));
           const dw = iw * scale;
           const dh = ih * scale;
           const dx = (w - dw) / 2;
-          const dy = (h - dh) / 2;
+          const dy = anchorBottom ? h - dh : (h - dh) / 2;
           ctx.drawImage(img, dx, dy, dw, dh);
         }
 
@@ -3139,16 +3199,20 @@
       }
 
       function getPistolPose(layout) {
-        // Slightly smaller on phones so it doesn't dominate the scene
         const narrow = layout.w < 440 || (typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches);
-        const bowW = layout.w * (narrow ? 0.72 : 0.88);
+        const sceneAspect = layout.w / Math.max(layout.h, 1);
+        const shortScene = sceneAspect > 1.08;
+        let bowScale = narrow ? 0.72 : 0.88;
+        if (shortScene) bowScale *= 0.88;
+        const bowW = layout.w * bowScale;
         const sprite = bowSprite || bowImg;
         const aspect = sprite
           ? (sprite.naturalWidth || sprite.width) / Math.max(sprite.naturalHeight || sprite.height || 1, 1)
           : 1;
         const bowH = bowW / Math.max(aspect, 0.01);
         const px = layout.w * 0.5;
-        const py = layout.h * 1.1;
+        // Anchor to bottom edge so width-based gun size doesn't float up on short canvases
+        const py = layout.h + bowH * 0.16;
         // Sharp upward pop on fire (no tip/tilt)
         const kick = Math.max(0, state.pistolRecoil || 0);
         const recoilY = -layout.h * 0.04 * kick;
@@ -3576,6 +3640,7 @@
           landTime: 0,
           settleTimer: null,
           cinematic: !!opts.cinematic,
+          wheelVideoPromise: opts.wheelVideoPromise || null,
           onCinematicComplete: opts.onCinematicComplete || null,
           slowMo: !opts.cinematic && state.hits === STREAK_TRIGGER_HITS - 1
         };
@@ -3712,7 +3777,12 @@
         if (f.cinematic) {
           const done = f.onCinematicComplete;
           if (f.outcome === "hit") {
-            setTimeout(() => { if (done) done(); }, 450);
+            const finishHitCinematic = () => { if (done) done(); };
+            if (f.wheelVideoPromise) {
+              f.wheelVideoPromise.then(finishHitCinematic);
+            } else {
+              setTimeout(finishHitCinematic, 450);
+            }
           } else {
             const shotMs = PULL_MS + SNAP_MS + FLIGHT_MS + SETTLE_MS;
             const wait = Math.max(0, FACE_CENSOR_MS - shotMs) + WHEEL_CINEMATIC_HURT_BEAT_MS;
