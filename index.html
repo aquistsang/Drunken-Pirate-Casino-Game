@@ -1224,83 +1224,80 @@
         font-size: 0.46rem;
       }
 
-      /* Wheel modal — shrink wheel, pin Take/Gamble side-by-side at bottom */
+      /* Wheel modal — centered wheel with Take/Gamble row at bottom */
       .wheel-overlay {
-        padding: 2px 4px 0;
-        justify-content: flex-end;
+        padding: 4px 6px;
+        justify-content: center;
       }
 
       .wheel-overlay-inner {
         height: 100%;
+        width: 100%;
         min-height: 0;
         overflow: hidden;
-        justify-content: flex-end;
+        justify-content: center;
       }
 
       .wheel-overlay-main {
-        position: relative;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+        align-items: center;
+        justify-items: center;
         height: 100%;
         width: 100%;
         min-height: 0;
-        padding-bottom: 38px;
-        justify-content: flex-start;
-        gap: 0;
+        padding-bottom: 0;
+        gap: 3px;
         overflow: hidden;
       }
 
       .wheel-overlay h2 {
-        font-size: clamp(0.72rem, 3.8cqw, 0.88rem);
+        font-size: clamp(0.72rem, 3.8cqw, 0.9rem);
         margin-bottom: 0;
         line-height: 1.15;
-        flex: 0 0 auto;
+        width: 100%;
       }
 
       .wheel-overlay .sub {
-        font-size: 0.58rem;
-        margin-bottom: 2px;
+        font-size: 0.6rem;
+        margin-bottom: 0;
         line-height: 1.2;
-        flex: 0 0 auto;
+        width: 100%;
       }
 
       .wheel-overlay .wheel-streak-info {
-        font-size: 0.58rem;
-        margin-bottom: 2px;
-        flex: 0 0 auto;
+        font-size: 0.6rem;
+        margin-bottom: 0;
+        width: 100%;
       }
 
       .wheel-overlay .wheel-result-reveal {
         min-height: 1.2rem;
         font-size: clamp(1.1rem, 6vw, 1.5rem);
-        margin-bottom: 2px;
-        flex: 0 0 auto;
+        margin-bottom: 0;
+        width: 100%;
       }
 
       .wheel-overlay .wheel-stage {
-        flex: 1 1 auto;
-        min-height: 0;
-        width: min(72cqw, 100%);
-        height: auto;
-        max-height: min(30cqh, 150px);
-        aspect-ratio: 1;
-        margin: 0 auto;
+        place-self: center;
+        flex: none;
+        width: min(86cqw, 50cqh, 240px);
+        height: min(86cqw, 50cqh, 240px);
+        max-width: 100%;
+        margin: auto;
       }
 
       .wheel-overlay .wheel-actions,
       .wheel-overlay .wheel-actions.streak {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 15;
+        position: static;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 4px;
         width: 100%;
         margin: 0;
-        padding: 4px 4px 3px;
-        background: linear-gradient(to top, rgba(8, 4, 2, 0.97) 75%, rgba(8, 4, 2, 0));
+        padding: 2px 0 0;
+        align-self: end;
+        background: none;
       }
 
       .wheel-overlay .btn-wheel-take,
@@ -1356,8 +1353,9 @@
         font-size: 0.7rem;
       }
 
-      .wheel-overlay-main {
-        padding-bottom: 34px;
+      .wheel-overlay .wheel-stage {
+        width: min(84cqw, 44cqh, 200px);
+        height: min(84cqw, 44cqh, 200px);
       }
 
       .wheel-overlay .btn-wheel-take,
@@ -1569,7 +1567,7 @@
       const SETTLE_MS = 500;
       const OVERLAY_MS = 1400;
       const FACE_CENSOR_MS = 1280;
-      const LOSE_SFX_DELAY_MS = 500;
+      const LOSE_SFX_DELAY_MS = 180;
       const HELP_KEY = "drunkenArcherHelpSeen";
       const CLIENT_SEED_KEY = "drunkenPirateClientSeed";
 
@@ -2253,11 +2251,9 @@
             const src = ctx.createBufferSource();
             src.buffer = loseHitBuffer;
             src.connect(masterGain || ctx.destination);
-            // After the bang (~170ms), skip ow file silence
-            src.start(ctx.currentTime + 0.17, LOSE_HIT_OFFSET);
+            src.start(ctx.currentTime, LOSE_HIT_OFFSET);
             return;
           }
-          // Fallback: HTMLAudio in the same gesture stack
           try {
             sfxFaceHit.volume = effectiveSfxVolume();
             sfxFaceHit.currentTime = LOSE_HIT_OFFSET;
@@ -2269,6 +2265,14 @@
         } else {
           start();
         }
+      }
+
+      function firePistolShot() {
+        unlockSfx();
+        state.muzzleFired = true;
+        state.muzzleFlash = 1;
+        state.pistolRecoil = 1;
+        playSfx(sfxShot);
       }
 
       const fairness = {
@@ -3755,25 +3759,10 @@
         state.faceCensored = false;
         state.faceHurt = false;
         state.faceHurtVariant = "patch";
-        state.muzzleFlash = 1;
-        state.muzzleFired = true;
-        state.pistolRecoil = 1;
+        state.muzzleFlash = 0;
+        state.muzzleFired = false;
+        state.pistolRecoil = 0;
         unlockSfx();
-        playSfx(sfxShot);
-        if (outcome !== "hit") {
-          state.faceCensored = true;
-          state.flinch = 1;
-          state.faceHurtVariant = pickLoseVariant();
-          if (!opts.cinematic) {
-            showOverlay("miss", "Try again", "", FACE_CENSOR_MS);
-          }
-          clearTimeout(state.faceCensorTimer);
-          state.faceCensorTimer = setTimeout(() => {
-            state.faceCensored = false;
-            state.faceHurt = true;
-            state.faceCensorTimer = null;
-          }, FACE_CENSOR_MS);
-        }
         state.flight = {
           startTime: performance.now(),
           outcome,
@@ -3823,19 +3812,11 @@
         if (elapsed < timing.pullMs + timing.snapMs) {
           state.handPull = 1 - (elapsed - timing.pullMs) / timing.snapMs;
           state.arrow = null;
-          if (!state.muzzleFired) {
-            state.muzzleFired = true;
-            state.muzzleFlash = 1;
-            playSfx(sfxShot);
-          }
+          if (!state.muzzleFired) firePistolShot();
           return;
         }
 
-        if (!state.muzzleFired) {
-          state.muzzleFired = true;
-          state.muzzleFlash = 1;
-          playSfx(sfxShot);
-        }
+        if (!state.muzzleFired) firePistolShot();
 
         if (elapsed < total) {
           state.handPull = 0;
@@ -3877,23 +3858,24 @@
           if (!f.cinematic) onStreakAppleLand(state.hits + 1);
           spawnParticles(f.endX, f.endY, 24, ["#ffe08a", "#ff8a3a", "#6dca8a", "#fff", "#e8c547"]);
         } else {
-          if (!state.faceCensored && !state.faceHurt) {
-            state.faceCensored = true;
-            state.flinch = 1;
-            state.faceHurtVariant = pickLoseVariant();
-            if (!f.cinematic) {
-              showOverlay("miss", "Try again", "", FACE_CENSOR_MS);
-            }
-            clearTimeout(state.faceCensorTimer);
-            state.faceCensorTimer = setTimeout(() => {
-              state.faceCensored = false;
-              state.faceHurt = true;
-              state.faceCensorTimer = null;
-            }, FACE_CENSOR_MS);
+          state.flinch = 1;
+          state.faceHurtVariant = pickLoseVariant();
+          state.faceCensored = true;
+          if (!f.cinematic) {
+            showOverlay("miss", "Try again", "", FACE_CENSOR_MS);
           }
+          clearTimeout(state.faceCensorTimer);
+          state.faceCensorTimer = setTimeout(() => {
+            state.faceCensored = false;
+            state.faceHurt = true;
+            state.faceCensorTimer = null;
+          }, FACE_CENSOR_MS);
           spawnThump(f.endX, f.endY);
-          clearTimeout(f.loseSfxTimer);
-          f.loseSfxTimer = setTimeout(() => playLoseExhale(), LOSE_SFX_DELAY_MS);
+          if (!f.loseSfxPlayed) {
+            f.loseSfxPlayed = true;
+            clearTimeout(f.loseSfxTimer);
+            f.loseSfxTimer = setTimeout(() => playLoseExhale(), LOSE_SFX_DELAY_MS);
+          }
           spawnParticles(layout.headX, layout.headY, 16, ["#c44", "#822", "#aaa", "#666"]);
           document.body.classList.add("flash-red");
           setTimeout(() => document.body.classList.remove("flash-red"), 500);
@@ -3910,7 +3892,6 @@
         const f = state.flight;
         if (!f) return;
         if (f.settleTimer) clearTimeout(f.settleTimer);
-        if (f.loseSfxTimer) clearTimeout(f.loseSfxTimer);
         const wasSlowMo = !!f.slowMo;
 
         state.flight = null;
