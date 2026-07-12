@@ -164,29 +164,37 @@
     }
 
     .btn-cheat {
-      position: fixed;
-      top: calc(6px + env(safe-area-inset-top, 0px));
-      left: calc(6px + env(safe-area-inset-left, 0px));
-      z-index: 120;
-      min-height: 28px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      background: rgba(80, 40, 120, 0.55);
-      border: 1px dashed rgba(200, 150, 255, 0.45);
-      color: rgba(230, 210, 255, 0.9);
-      font-size: 0.62rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      opacity: 0.72;
-    }
-
-    .btn-cheat:hover {
-      opacity: 1;
-      filter: brightness(1.1);
-    }
-
-    .btn-cheat-mobile {
       display: none;
+    }
+
+    .brand-cheats {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      width: 100%;
+      padding: 0 40px 2px;
+    }
+
+    .btn-cheat-bar {
+      min-height: 0;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: rgba(80, 40, 120, 0.5);
+      border: 1px dashed rgba(200, 150, 255, 0.4);
+      color: rgba(230, 210, 255, 0.88);
+      font-size: 0.52rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
+
+    .btn-cheat-bar:hover {
+      opacity: 1;
+      filter: brightness(1.08);
     }
 
     .audio-controls {
@@ -1105,6 +1113,16 @@
         line-height: 1.1;
       }
 
+      .brand-cheats {
+        padding: 0 34px 1px;
+        gap: 3px;
+      }
+
+      .btn-cheat-bar {
+        font-size: 0.46rem;
+        padding: 1px 5px;
+      }
+
       .btn-help {
         width: 30px;
         height: 30px;
@@ -1226,30 +1244,6 @@
 
       .rtp-info {
         font-size: 0.46rem;
-      }
-
-      .btn-cheat {
-        display: none;
-      }
-
-      .btn-cheat-mobile {
-        display: block;
-        width: 100%;
-        min-height: 28px;
-        padding: 5px 8px;
-        border-radius: 7px;
-        background: rgba(80, 40, 120, 0.55);
-        border: 1px dashed rgba(200, 150, 255, 0.45);
-        color: rgba(230, 210, 255, 0.92);
-        font-size: 0.62rem;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-        line-height: 1.1;
-      }
-
-      .btn-cheat-mobile:active:not(:disabled) {
-        opacity: 1;
-        filter: brightness(1.08);
       }
 
       /* Wheel modal — large centered wheel, actions at bottom */
@@ -1426,11 +1420,14 @@
   </style>
 </head>
 <body>
-  <button type="button" class="btn-cheat" id="btnCheatFifthHit" title="Dev: trigger 5th apple hit">⚡ 5th hit</button>
   <div class="pub-roof"></div>
 
   <div class="wrap">
     <header class="brand">
+      <div class="brand-cheats">
+        <button type="button" class="btn-cheat-bar" id="btnCheatFifthHit" title="Dev: trigger 5th apple hit">5th hit</button>
+        <button type="button" class="btn-cheat-bar" id="btnCheatFifthHitWin" title="Dev: 5th hit wheel apple jackpot">5th win</button>
+      </div>
       <h1>The Drunken Pirate</h1>
       <button type="button" class="btn-help" id="btnHelp" aria-label="How to play">?</button>
     </header>
@@ -1498,7 +1495,6 @@
         <button type="button" class="btn-cash" id="btnCash" disabled>💰 Cash Out</button>
       </div>
       <button type="button" class="btn-wheel-buyin" id="btnWheelBuyin" disabled>Ship's Wheel (Bonus Spin)</button>
-      <button type="button" class="btn-cheat-mobile" id="btnCheatFifthHitMobile" title="Dev: trigger 5th apple hit">⚡ 5th hit</button>
       <div class="controls-footer">
         <div class="audio-controls">
           <button type="button" class="btn-audio-toggle" id="btnMuteMusic" aria-pressed="false" title="Mute music">
@@ -1668,6 +1664,7 @@
       const betInput = document.getElementById("betInput");
       const btnShoot = document.getElementById("btnShoot");
       const btnCheatFifthHit = document.getElementById("btnCheatFifthHit");
+      const btnCheatFifthHitWin = document.getElementById("btnCheatFifthHitWin");
       const btnCash = document.getElementById("btnCash");
       const toastEl = document.getElementById("toast");
       const helpModal = document.getElementById("helpModal");
@@ -2426,7 +2423,19 @@
         return parseInt(digest.slice(0, 8), 16) / 0x100000000;
       }
 
+      let cheatForceWheelApple = false;
+
       async function rollWheelSlice() {
+        if (cheatForceWheelApple) {
+          cheatForceWheelApple = false;
+          fairness.wheelNonce += 1;
+          const slice = WHEEL_SLICES.findIndex((s) => s === "apple");
+          fairness.lastWheelRoll = 0;
+          fairness.lastWheelSlice = slice >= 0 ? slice : 1;
+          fairness.lastWheelOutcome = "apple";
+          updateFairnessUi();
+          return fairness.lastWheelSlice;
+        }
         fairness.wheelNonce += 1;
         const roll = await fairWheelRollValue(fairness.serverSeed, fairness.clientSeed, fairness.wheelNonce);
         const slice = Math.min(WHEEL_SLICE_COUNT - 1, Math.floor(roll * WHEEL_SLICE_COUNT));
@@ -4053,6 +4062,69 @@
         startFlight("hit");
       }
 
+      async function cheatFifthHitWin() {
+        if (state.animating || state.wheelSpinning || state.wheelCinematic || state.wheelIntro) return;
+        if (wheelBuyinConfirmModal.classList.contains("open")) return;
+
+        unlockSfx();
+        ensureBgVideoPlaying();
+        ensureMusicPlaying();
+
+        if (state.wheelOffer) {
+          state.wheelOffer = false;
+          state.wheelMode = null;
+          closeWheelModal();
+        }
+        if (state.flight && state.flight.settleTimer) clearTimeout(state.flight.settleTimer);
+        if (state.flight && state.flight.loseSfxTimer) clearTimeout(state.flight.loseSfxTimer);
+        state.flight = null;
+        state.arrow = null;
+        state.arrowTrail = [];
+        state.animating = false;
+        state.handPull = 0;
+        state.flinch = 0;
+        state.faceCensored = false;
+        state.faceHurt = false;
+        clearTimeout(state.faceCensorTimer);
+        state.faceCensorTimer = null;
+
+        if (!state.roundActive) {
+          if (state.balance < state.bet - 1e-9) {
+            showToast("Need balance for test round");
+            return;
+          }
+          if (fairness.revealed) await commitServerSeed();
+          state.roundBet = state.bet;
+          state.balance = Math.round((state.balance - state.roundBet) * 100) / 100;
+          state.roundActive = true;
+          pulseBalance();
+        }
+
+        state.hits = STREAK_TRIGGER_HITS;
+        state.multiplier = STREAK_SAFE_MULT;
+        state.wheelOffer = true;
+        state.wheelMode = "streak";
+        state.appleDamaged = false;
+        state.appleWobble = 0;
+        startStreakTensionLayer();
+        cheatForceWheelApple = true;
+
+        clearWheelStreakIntro();
+        updateWheelModalCopy();
+        hideWheelResultReveal();
+        state.wheelRotation = state.wheelRotation || 0;
+        wheelModalInner.classList.remove("wheel-spinning", "wheel-revealing");
+        wheelModal.classList.add("open", "intro-ready");
+        finishWheelModalOpen();
+        updateUI();
+
+        setTimeout(() => {
+          if (state.wheelOffer && state.wheelMode === "streak" && !state.wheelSpinning && !state.wheelIntro) {
+            gambleWheel();
+          }
+        }, 350);
+      }
+
       async function shoot() {
         if (state.animating || state.wheelOffer || state.wheelSpinning || state.wheelCinematic || state.wheelIntro) return;
         unlockSfx();
@@ -4129,7 +4201,7 @@
 
       btnShoot.addEventListener("click", shoot);
       btnCheatFifthHit.addEventListener("click", () => { cheatFifthHit(); });
-      document.getElementById("btnCheatFifthHitMobile").addEventListener("click", () => { cheatFifthHit(); });
+      btnCheatFifthHitWin.addEventListener("click", () => { cheatFifthHitWin(); });
       btnCash.addEventListener("click", cashOut);
       btnWheelTake.addEventListener("click", takeWheelLoot);
       btnWheelGamble.addEventListener("click", gambleWheel);
