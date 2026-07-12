@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>The Drunken Pirate — Boyz Casino</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet" />
   <style>
     :root {
       --wood-deep: #1a0e08;
@@ -18,6 +21,8 @@
       --red: #b8322a;
       --glass: rgba(26, 14, 8, 0.78);
       --border: rgba(232, 197, 71, 0.28);
+      --font-title: "UnifrakturMaguntia", Georgia, "Times New Roman", serif;
+      --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +31,7 @@
       height: 100%;
       height: 100dvh;
       color: var(--cream);
-      font-family: "Segoe UI", system-ui, sans-serif;
+      font-family: var(--font-body);
       -webkit-tap-highlight-color: transparent;
       overflow: hidden;
     }
@@ -113,15 +118,14 @@
     .brand-eyebrow {
       font-size: 0.58rem;
       letter-spacing: 0.28em;
-      text-transform: uppercase;
       color: var(--mead);
     }
 
     .brand h1 {
-      font-size: clamp(1.15rem, 2.8dvh + 0.4rem, 1.85rem);
+      font-family: var(--font-title);
+      font-size: clamp(1.35rem, 3.2dvh + 0.5rem, 2.1rem);
       font-weight: 900;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+      letter-spacing: 0.03em;
       color: var(--gold-bright);
       text-shadow:
         0 0 22px rgba(255, 180, 40, 0.55),
@@ -159,6 +163,28 @@
       transform: translateY(-50%) scale(1.06);
     }
 
+    .btn-cheat {
+      position: fixed;
+      top: calc(6px + env(safe-area-inset-top, 0px));
+      left: calc(6px + env(safe-area-inset-left, 0px));
+      z-index: 120;
+      min-height: 28px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(80, 40, 120, 0.55);
+      border: 1px dashed rgba(200, 150, 255, 0.45);
+      color: rgba(230, 210, 255, 0.9);
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      opacity: 0.72;
+    }
+
+    .btn-cheat:hover {
+      opacity: 1;
+      filter: brightness(1.1);
+    }
+
     .audio-controls {
       display: flex;
       align-items: center;
@@ -180,7 +206,6 @@
       font-size: 0.72rem;
       font-weight: 800;
       letter-spacing: 0.06em;
-      text-transform: uppercase;
       line-height: 1;
       box-shadow: 0 0 10px rgba(232, 197, 71, 0.12);
       white-space: nowrap;
@@ -223,9 +248,8 @@
     .stat.balance-stat { text-align: left; }
 
     .stat .label {
-      font-size: 0.55rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 0.62rem;
+      letter-spacing: 0.04em;
       color: rgba(243, 230, 208, 0.5);
       margin-bottom: 2px;
     }
@@ -239,7 +263,35 @@
 
     .stat .value.balance { color: var(--gold); transition: transform 0.2s; }
     .stat .value.balance.pulse { transform: scale(1.08); color: var(--gold-bright); }
-    .stat .value.mult { color: var(--fire-soft); }
+    .stat .value.mult { color: var(--fire-soft); transition: color 0.25s ease, text-shadow 0.25s ease, transform 0.25s ease; }
+    .stat .value.mult.mult-streak-warm {
+      color: #ffb85a;
+      text-shadow: 0 0 12px rgba(255, 170, 60, 0.55);
+    }
+    .stat .value.mult.mult-streak-hot {
+      color: #ffe08a;
+      text-shadow: 0 0 18px rgba(255, 200, 80, 0.8), 0 0 34px rgba(255, 120, 40, 0.45);
+      animation: multStreakPulse 1.15s ease-in-out infinite;
+    }
+
+    @keyframes multStreakPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.07); }
+    }
+
+    .scene-stage.streak-shake {
+      animation: streakScreenShake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    @keyframes streakScreenShake {
+      0%, 100% { transform: translate(0, 0); }
+      12% { transform: translate(-5px, 2px); }
+      24% { transform: translate(4px, -3px); }
+      36% { transform: translate(-3px, -2px); }
+      48% { transform: translate(4px, 3px); }
+      60% { transform: translate(-2px, 1px); }
+      72% { transform: translate(2px, -1px); }
+    }
     .stat .value.potential { color: #6dca8a; }
 
     .result-banner {
@@ -280,7 +332,6 @@
       font-size: 0.95rem;
       font-weight: 900;
       letter-spacing: 0.06em;
-      text-transform: uppercase;
       line-height: 1.2;
     }
 
@@ -313,6 +364,7 @@
       min-height: 0;
       max-height: 100%;
       aspect-ratio: 5 / 4;
+      container-type: size;
       border-radius: 14px;
       overflow: hidden;
       border: 3px solid #3a2618;
@@ -339,8 +391,7 @@
 
     .bet-label {
       font-size: 0.55rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      letter-spacing: 0.04em;
       color: rgba(243, 230, 208, 0.5);
       margin-bottom: 4px;
     }
@@ -432,8 +483,7 @@
       color: #fff8e8;
       font-size: clamp(0.95rem, 2.2dvh, 1.1rem);
       font-weight: 900;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+      letter-spacing: 0.06em;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       box-shadow: 0 4px 0 #6a1e08, 0 8px 18px rgba(255, 80, 20, 0.3);
     }
@@ -450,12 +500,319 @@
       font-size: clamp(0.95rem, 2.2dvh, 1.1rem);
       font-weight: 900;
       letter-spacing: 0.12em;
-      text-transform: uppercase;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       box-shadow: 0 4px 0 #143d28, 0 8px 18px rgba(46, 125, 79, 0.3);
     }
 
     .btn-cash:hover:not(:disabled) { filter: brightness(1.08); }
+
+    .btn-wheel-buyin {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #6b4a28 0%, #3d2818 55%, #2a1a10 100%);
+      border: 2px solid rgba(232, 197, 71, 0.35);
+      color: var(--gold-bright);
+      font-size: clamp(0.82rem, 2vw, 0.95rem);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 3px 0 #1a0e08, 0 6px 14px rgba(0, 0, 0, 0.35);
+      line-height: 1.2;
+      transition: filter 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-wheel-buyin:not(:disabled) {
+      animation: wheelBuyinGlow 2.6s ease-in-out infinite;
+    }
+
+    @keyframes wheelBuyinGlow {
+      0%, 100% {
+        border-color: rgba(232, 197, 71, 0.38);
+        box-shadow: 0 3px 0 #1a0e08, 0 6px 14px rgba(0, 0, 0, 0.35);
+      }
+      50% {
+        border-color: rgba(255, 224, 138, 0.72);
+        box-shadow: 0 3px 0 #1a0e08, 0 8px 20px rgba(232, 197, 71, 0.28), 0 0 16px rgba(255, 190, 60, 0.22);
+      }
+    }
+
+    .btn-wheel-buyin:hover:not(:disabled) { filter: brightness(1.12); }
+
+    .wheel-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 8px;
+      background:
+        radial-gradient(ellipse 85% 75% at 50% 50%, rgba(8, 4, 2, 0.18) 0%, rgba(8, 4, 2, 0.48) 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .wheel-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .scene-stage.wheel-gold-pulse::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 6;
+      background:
+        radial-gradient(ellipse 75% 65% at 50% 48%, rgba(255, 210, 90, 0.42) 0%, rgba(255, 160, 40, 0.12) 45%, transparent 72%);
+      animation: wheelGoldPulse 1.15s ease-out forwards;
+    }
+
+    @keyframes wheelGoldPulse {
+      0% { opacity: 0; transform: scale(0.94); }
+      30% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.04); }
+    }
+
+    .wheel-streak-banner {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 12;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: clamp(1.6rem, 9cqw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      color: var(--gold-bright);
+      text-shadow:
+        0 0 24px rgba(255, 190, 60, 0.75),
+        0 3px 14px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.55);
+    }
+
+    .wheel-overlay.streak-intro .wheel-streak-banner {
+      display: flex;
+      animation: wheelStreakBannerSlam 0.55s cubic-bezier(0.22, 1.1, 0.36, 1) forwards;
+    }
+
+    @keyframes wheelStreakBannerSlam {
+      0% { opacity: 0; transform: scale(0.55); }
+      70% { opacity: 1; transform: scale(1.08); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .wheel-overlay.streak-intro .wheel-overlay-main {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+    }
+
+    .wheel-overlay.intro-ready .wheel-streak-banner {
+      display: none !important;
+      pointer-events: none !important;
+    }
+
+    .wheel-overlay.intro-ready .wheel-overlay-main {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #wheelModalInner.wheel-spinning .wheel-actions button {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    #wheelModalInner.wheel-spinning .wheel-streak-info,
+    #wheelModalInner.wheel-spinning .wheel-actions,
+    #wheelModalInner.wheel-spinning .sub,
+    #wheelModalInner.wheel-spinning #wheelTitle,
+    #wheelModalInner.wheel-revealing .wheel-streak-info,
+    #wheelModalInner.wheel-revealing .wheel-actions,
+    #wheelModalInner.wheel-revealing .sub,
+    #wheelModalInner.wheel-revealing #wheelTitle {
+      opacity: 0;
+      pointer-events: none;
+      max-height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .wheel-overlay-inner {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      transform: translateY(6px);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .wheel-overlay.open .wheel-overlay-inner {
+      transform: translateY(0);
+    }
+
+    .wheel-overlay-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wheel-overlay h2 {
+      text-align: center;
+      font-size: clamp(0.95rem, 5cqw, 1.35rem);
+      letter-spacing: 0.1em;
+      color: var(--gold-bright);
+      text-shadow:
+        0 0 18px rgba(255, 180, 40, 0.55),
+        0 2px 8px rgba(0, 0, 0, 0.85);
+      margin-bottom: 4px;
+    }
+
+    .wheel-overlay .sub {
+      text-align: center;
+      font-size: clamp(0.72rem, 2.5vw, 0.85rem);
+      color: rgba(243, 230, 208, 0.82);
+      margin-bottom: 6px;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+    }
+
+    .wheel-stage {
+      position: relative;
+      flex: 0 0 auto;
+      width: min(88cqw, 62cqh, 380px);
+      height: min(88cqw, 62cqh, 380px);
+      margin: 4px auto 6px;
+    }
+
+    .wheel-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 50%;
+      filter: drop-shadow(0 12px 36px rgba(0, 0, 0, 0.75));
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 34px solid var(--gold-bright);
+      filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.75));
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .wheel-streak-info {
+      text-align: center;
+      font-size: clamp(0.78rem, 2.5vw, 0.9rem);
+      color: var(--gold);
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: 0.06em;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85);
+    }
+
+    .wheel-result-reveal {
+      min-height: 2.4rem;
+      text-align: center;
+      font-family: var(--font-title);
+      font-size: clamp(1.8rem, 8vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      opacity: 0;
+      transform: scale(0.88);
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+    }
+
+    .wheel-result-reveal.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .wheel-result-reveal.is-apple {
+      color: #6dca8a;
+      text-shadow: 0 0 22px rgba(109, 202, 138, 0.65), 0 2px 12px rgba(0, 0, 0, 0.9);
+    }
+
+    .wheel-result-reveal.is-skull {
+      color: #e88;
+      text-shadow: 0 0 22px rgba(200, 60, 60, 0.55), 0 2px 12px rgba(0, 0, 0, 0.9);
+    }
+
+    .wheel-actions {
+      display: grid;
+      gap: 8px;
+      width: min(88%, 100%);
+      flex: 0 0 auto;
+    }
+
+    .wheel-actions.streak {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 480px) {
+      .wheel-actions.streak {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .btn-wheel-take {
+      min-height: 44px;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #4caf6a 0%, #2e7d4f 55%, #1f5a38 100%);
+      border: 2px solid rgba(160, 230, 180, 0.35);
+      color: #e8fff0;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      font-size: 0.78rem;
+    }
+
+    .btn-wheel-gamble {
+      min-height: 44px;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #c44 0%, #8a2020 55%, #5a1010 100%);
+      border: 2px solid rgba(255, 160, 140, 0.35);
+      color: #ffe8e0;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      font-size: 0.78rem;
+    }
+
+    .btn-wheel-take:hover:not(:disabled),
+    .btn-wheel-gamble:hover:not(:disabled) { filter: brightness(1.08); }
+
+    .btn-wheel-take:disabled,
+    .btn-wheel-gamble:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
 
     .controls-footer {
       display: flex;
@@ -471,7 +828,6 @@
       font-size: 0.58rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
       color: rgba(243, 230, 208, 0.45);
       text-align: right;
       line-height: 1.3;
@@ -505,7 +861,6 @@
       display: block;
       font-size: 0.62rem;
       letter-spacing: 0.1em;
-      text-transform: uppercase;
       color: var(--gold);
       margin-bottom: 4px;
     }
@@ -515,7 +870,6 @@
       line-height: 1.4;
       color: rgba(243, 230, 208, 0.88);
       word-break: break-all;
-      font-family: Consolas, "Courier New", monospace;
     }
 
     .fairness-block .note {
@@ -532,8 +886,7 @@
       border: 1px solid rgba(232, 197, 71, 0.28);
       background: rgba(0, 0, 0, 0.4);
       color: var(--cream);
-      font-size: 0.72rem;
-      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.78rem;
       outline: none;
     }
 
@@ -604,7 +957,6 @@
       text-align: center;
       font-size: 1.05rem;
       letter-spacing: 0.1em;
-      text-transform: uppercase;
       color: var(--gold-bright);
       margin-bottom: 2px;
     }
@@ -638,7 +990,6 @@
       display: block;
       font-size: 0.65rem;
       letter-spacing: 0.1em;
-      text-transform: uppercase;
       margin-bottom: 2px;
     }
 
@@ -652,7 +1003,55 @@
       color: #fff;
       font-weight: 900;
       letter-spacing: 0.14em;
-      text-transform: uppercase;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-modal-secondary {
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 2px solid rgba(232, 197, 71, 0.22);
+      color: rgba(243, 230, 208, 0.88);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .btn-modal-secondary:hover { filter: brightness(1.08); }
+
+    .modal-buyin-summary {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .modal-buyin-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(232, 197, 71, 0.15);
+      font-size: 0.82rem;
+      color: rgba(243, 230, 208, 0.9);
+    }
+
+    .modal-buyin-row strong {
+      color: var(--gold-bright);
+      font-size: 0.9rem;
+    }
+
+    .modal-buyin-row span {
+      color: rgba(243, 230, 208, 0.65);
+      font-size: 0.72rem;
     }
 
     @media (max-width: 480px) {
@@ -796,6 +1195,7 @@
   </style>
 </head>
 <body>
+  <button type="button" class="btn-cheat" id="btnCheatFifthHit" title="Dev: trigger 5th apple hit">⚡ 5th hit</button>
   <div class="pub-roof"></div>
 
   <div class="wrap">
@@ -826,8 +1226,27 @@
     </div>
 
     <div class="scene-slot">
-      <div class="scene-stage">
+      <div class="scene-stage" id="sceneStage">
         <canvas id="gameCanvas" aria-label="Pirate tavern scene"></canvas>
+        <div class="wheel-overlay" id="wheelModal" role="dialog" aria-modal="true" aria-labelledby="wheelTitle">
+          <p class="wheel-streak-banner" id="wheelStreakBanner">5 in a row!</p>
+          <div class="wheel-overlay-inner" id="wheelModalInner">
+            <div class="wheel-overlay-main" id="wheelOverlayMain">
+            <h2 id="wheelTitle">Ship's Wheel Gamble</h2>
+            <p class="sub" id="wheelSub">5 hits · 32× — take the loot or spin!</p>
+            <p class="wheel-streak-info" id="wheelStreakInfo"></p>
+            <p class="wheel-result-reveal" id="wheelResultReveal" aria-live="polite"></p>
+            <div class="wheel-stage">
+              <div class="wheel-pointer" aria-hidden="true"></div>
+              <canvas class="wheel-canvas" id="wheelCanvas" width="420" height="420" aria-label="Ship's wheel"></canvas>
+            </div>
+            <div class="wheel-actions streak" id="wheelActions">
+              <button type="button" class="btn-wheel-take" id="btnWheelTake">Take 32×</button>
+              <button type="button" class="btn-wheel-gamble" id="btnWheelGamble">Gamble</button>
+            </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -844,9 +1263,10 @@
         </div>
       </div>
       <div class="action-row">
-        <button type="button" class="btn-shoot" id="btnShoot">🔫 FIRE</button>
+        <button type="button" class="btn-shoot" id="btnShoot">🔫 Fire</button>
         <button type="button" class="btn-cash" id="btnCash" disabled>💰 Cash Out</button>
       </div>
+      <button type="button" class="btn-wheel-buyin" id="btnWheelBuyin" disabled>Ship's Wheel (Bonus Spin)</button>
       <div class="controls-footer">
         <div class="audio-controls">
           <button type="button" class="btn-audio-toggle" id="btnMuteMusic" aria-pressed="false" title="Mute music">
@@ -864,6 +1284,31 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <div class="modal-backdrop" id="wheelBuyinConfirmModal" role="dialog" aria-modal="true" aria-labelledby="wheelBuyinConfirmTitle">
+    <div class="modal">
+      <h2 id="wheelBuyinConfirmTitle">Ship's Wheel (Bonus Spin)</h2>
+      <p class="sub">Confirm before you spin</p>
+      <div class="modal-buyin-summary">
+        <div class="modal-buyin-row">
+          <div><span>Entry fee</span><br><strong id="wheelBuyinConfirmCost">10× bet</strong></div>
+          <div style="text-align:right"><span>Your bet</span><br><strong id="wheelBuyinConfirmBet">$1.00</strong></div>
+        </div>
+        <div class="modal-buyin-row">
+          <div><span>Apple prize</span><br><strong id="wheelBuyinConfirmPrize">30× bet</strong></div>
+          <div style="text-align:right"><span>You win</span><br><strong id="wheelBuyinConfirmPrizeAmt">$30.00</strong></div>
+        </div>
+        <div class="modal-buyin-row">
+          <div><span>Skull</span><br><strong>Lose entry fee</strong></div>
+          <div style="text-align:right"><span>Odds</span><br><strong>2 apples / 6 slices</strong></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-secondary" id="btnWheelBuyinCancel">Not now</button>
+        <button type="button" class="btn-modal" id="btnWheelBuyinConfirm">Spin</button>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="rtpModal" role="dialog" aria-modal="true" aria-labelledby="rtpTitle">
     <div class="modal">
@@ -895,8 +1340,20 @@
           <p class="value" id="rtpLastRoll">—</p>
         </div>
         <div class="fairness-block">
+          <span class="label">Wheel nonce</span>
+          <p class="value" id="rtpWheelNonce">0</p>
+        </div>
+        <div class="fairness-block">
+          <span class="label">Last wheel roll</span>
+          <p class="value" id="rtpLastWheelRoll">—</p>
+        </div>
+        <div class="fairness-block">
+          <span class="label">Ship's wheel</span>
+          <p class="note">6 slices: 2 apples (33%), 4 skulls (67%). Earned at 5 hits (32×): gamble for 96× or bust. Buy-in: 10× bet entry, 30× bet apple prize.</p>
+        </div>
+        <div class="fairness-block">
           <span class="label">Verify</span>
-          <p class="note">SHA-256 of <code>serverSeed:clientSeed:nonce</code> → first 8 hex chars ÷ 2³². If result &lt; 0.485, apple hit; otherwise face hit. Reveal server seed after each round to audit shots.</p>
+          <p class="note">Shots: SHA-256 of <code>serverSeed:clientSeed:nonce</code> → first 8 hex ÷ 2³²; &lt; 0.485 = apple hit. Wheel: SHA-256 of <code>serverSeed:clientSeed:wheel:wheelNonce</code> → slice index = floor(result × 6).</p>
         </div>
       </div>
       <button type="button" class="btn-modal" id="btnCloseRtp">Got it</button>
@@ -909,13 +1366,16 @@
       <p class="sub">97% RTP · 3% house edge</p>
       <ul>
         <li><strong>You are the pirate!</strong> Place your bet ($0.01–$100).</li>
-        <li><strong>FIRE</strong> Blast your pistol toward the apple on his head.</li>
+        <li><strong>Fire</strong> Blast your pistol toward the apple on his head.</li>
         <li><strong>Hit the apple</strong> Multiplier doubles! 1× → 2× → 4× → 8× …</li>
         <li><strong>Miss</strong> Hit his face instead — bet lost.</li>
         <li><strong>Cash out</strong> Keep winnings (bet × multiplier) anytime.</li>
+        <li><strong>5-hit wheel</strong> Land 5 apples in a row (32×) — take the loot or gamble on the ship's wheel!</li>
+        <li><strong>Wheel gamble</strong> 2 apples / 4 skulls (33% win). Apple = 96× jackpot. Skull = lose all.</li>
+        <li><strong>Ship's Wheel (Bonus Spin)</strong> Between rounds, pay 10× bet to spin — apple wins 30× bet; skull loses the fee.</li>
         <li><strong>Fair 97% RTP</strong> A slight 3% house edge keeps the tavern running!</li>
       </ul>
-      <button type="button" class="btn-modal" id="btnCloseHelp">Got it — FIRE!</button>
+      <button type="button" class="btn-modal" id="btnCloseHelp">Got it — fire!</button>
     </div>
   </div>
 
@@ -938,6 +1398,24 @@
       const HELP_KEY = "drunkenArcherHelpSeen";
       const CLIENT_SEED_KEY = "drunkenPirateClientSeed";
 
+      const STREAK_TRIGGER_HITS = 5;
+      const STREAK_SLOW_MO_MULT = 3.2;
+      const STREAK_CLAPS_VOL = [0, 0, 0, 0, 0.26, 0.58];
+      const STREAK_CLAPS_PEAK_VOL = 0.92;
+      const STREAK_SAFE_MULT = 32;
+      const WHEEL_SLICE_COUNT = 6;
+      const WHEEL_SLICES = ["skull", "apple", "skull", "skull", "apple", "skull"];
+      const STREAK_JACKPOT_MULT = 96;
+      const BUYIN_COST_MULT = 10;
+      const BUYIN_APPLE_MULT = 30;
+      const WHEEL_BUYIN_TITLE = "Ship's Wheel (Bonus Spin)";
+      const WHEEL_SPIN_MS = 5800;
+      const WHEEL_RESULT_HOLD_MS = 2000;
+      const WHEEL_CINEMATIC_FINAL_MS = 2400;
+      const WHEEL_CINEMATIC_HURT_BEAT_MS = 700;
+      const WHEEL_STREAK_INTRO_MS = 1100;
+      const WHEEL_SLICE_DEG = 360 / WHEEL_SLICE_COUNT;
+
       const TAVERN_NAMES = [
         "The Drunken Duck",
         "The Wobbly Arrow",
@@ -956,6 +1434,7 @@
       const potentialDisplay = document.getElementById("potentialDisplay");
       const betInput = document.getElementById("betInput");
       const btnShoot = document.getElementById("btnShoot");
+      const btnCheatFifthHit = document.getElementById("btnCheatFifthHit");
       const btnCash = document.getElementById("btnCash");
       const toastEl = document.getElementById("toast");
       const helpModal = document.getElementById("helpModal");
@@ -964,16 +1443,40 @@
       const rtpServerSeed = document.getElementById("rtpServerSeed");
       const rtpNonce = document.getElementById("rtpNonce");
       const rtpLastRoll = document.getElementById("rtpLastRoll");
+      const rtpWheelNonce = document.getElementById("rtpWheelNonce");
+      const rtpLastWheelRoll = document.getElementById("rtpLastWheelRoll");
       const clientSeedInput = document.getElementById("clientSeedInput");
       const resultBanner = document.getElementById("resultBanner");
       const resultTitle = document.getElementById("resultTitle");
       const resultSub = document.getElementById("resultSub");
+      const wheelModal = document.getElementById("wheelModal");
+      const wheelModalInner = document.getElementById("wheelModalInner");
+      const sceneStage = document.getElementById("sceneStage");
+      const wheelStreakBanner = document.getElementById("wheelStreakBanner");
+      const wheelTitle = document.getElementById("wheelTitle");
+      const wheelSub = document.getElementById("wheelSub");
+      const wheelStreakInfo = document.getElementById("wheelStreakInfo");
+      const wheelCanvas = document.getElementById("wheelCanvas");
+      const wheelCtx = wheelCanvas.getContext("2d");
+      const wheelActions = document.getElementById("wheelActions");
+      const btnWheelTake = document.getElementById("btnWheelTake");
+      const btnWheelGamble = document.getElementById("btnWheelGamble");
+      const btnWheelBuyin = document.getElementById("btnWheelBuyin");
+      const wheelBuyinConfirmModal = document.getElementById("wheelBuyinConfirmModal");
+      const wheelBuyinConfirmCost = document.getElementById("wheelBuyinConfirmCost");
+      const wheelBuyinConfirmBet = document.getElementById("wheelBuyinConfirmBet");
+      const wheelBuyinConfirmPrize = document.getElementById("wheelBuyinConfirmPrize");
+      const wheelBuyinConfirmPrizeAmt = document.getElementById("wheelBuyinConfirmPrizeAmt");
+      const btnWheelBuyinConfirm = document.getElementById("btnWheelBuyinConfirm");
+      const btnWheelBuyinCancel = document.getElementById("btnWheelBuyinCancel");
+      const wheelResultReveal = document.getElementById("wheelResultReveal");
 
       const characterImg = new Image();
       const characterBlinkImg = new Image();
       const characterHitImg = new Image();
       const characterLoseImg = new Image();
       const characterLoseBandageImg = new Image();
+      const characterLoseBruiseImg = new Image();
       const bowImg = new Image();
       const muzzleImg = new Image();
       const appleImg = new Image();
@@ -987,18 +1490,28 @@
       bgVideo.setAttribute("playsinline", "");
       bgVideo.setAttribute("webkit-playsinline", "");
       bgVideo.preload = "auto";
+      const bgWheelAppleVideo = document.createElement("video");
+      bgWheelAppleVideo.muted = true;
+      bgWheelAppleVideo.defaultMuted = true;
+      bgWheelAppleVideo.loop = false;
+      bgWheelAppleVideo.playsInline = true;
+      bgWheelAppleVideo.setAttribute("playsinline", "");
+      bgWheelAppleVideo.setAttribute("webkit-playsinline", "");
+      bgWheelAppleVideo.preload = "auto";
       let charSprite = null;
       let charBlinkSprite = null;
       let charHitSprite = null;
       let charLoseSprite = null;
       let charLoseBandageSprite = null;
+      let charLoseBruiseSprite = null;
       let bowSprite = null;
       let muzzleSprite = null;
       let appleSprite = null;
       let appleHitSprite = null;
       let bgSprite = null;
       let bgVideoReady = false;
-      let assetsReady = { character: false, characterBlink: false, characterHit: false, characterLose: false, characterLoseBandage: false, bow: false, muzzle: false, apple: false, appleHit: false, bg: false };
+      let wheelAppleVideoReady = false;
+      let assetsReady = { character: false, characterBlink: false, characterHit: false, characterLose: false, characterLoseBandage: false, characterLoseBruise: false, bow: false, muzzle: false, apple: false, appleHit: false, bg: false };
       // Tavern background already includes the character — don't draw character.png on top
       const SCENE_HAS_CHARACTER = false;
 
@@ -1102,6 +1615,11 @@
         catch (e) { charLoseBandageSprite = characterLoseBandageImg; }
         assetsReady.characterLoseBandage = true;
       };
+      characterLoseBruiseImg.onload = () => {
+        try { charLoseBruiseSprite = knockOutDarkBackground(characterLoseBruiseImg, 35); }
+        catch (e) { charLoseBruiseSprite = characterLoseBruiseImg; }
+        assetsReady.characterLoseBruise = true;
+      };
       bowImg.onload = () => {
         try { bowSprite = knockOutDarkBackground(bowImg, 28); }
         catch (e) { bowSprite = bowImg; }
@@ -1118,8 +1636,8 @@
         assetsReady.apple = true;
       };
       appleHitImg.onload = () => {
-        try { appleHitSprite = knockOutDarkBackground(appleHitImg, 45); }
-        catch (e) { appleHitSprite = appleHitImg; }
+        // Keep full apple-hit art — knockOut eats the bullet hole and dark shading.
+        appleHitSprite = appleHitImg;
         assetsReady.appleHit = true;
       };
       characterImg.onerror = () => { assetsReady.character = false; };
@@ -1127,6 +1645,7 @@
       characterHitImg.onerror = () => { assetsReady.characterHit = false; };
       characterLoseImg.onerror = () => { assetsReady.characterLose = false; };
       characterLoseBandageImg.onerror = () => { assetsReady.characterLoseBandage = false; };
+      characterLoseBruiseImg.onerror = () => { assetsReady.characterLoseBruise = false; };
       bowImg.onerror = () => { assetsReady.bow = false; };
       muzzleImg.onerror = () => { assetsReady.muzzle = false; };
       appleImg.onerror = () => { assetsReady.apple = false; };
@@ -1139,15 +1658,19 @@
       bgVideo.addEventListener("loadeddata", () => {
         bgVideoReady = true;
         assetsReady.bg = true;
-        const p = bgVideo.play();
-        if (p && typeof p.catch === "function") p.catch(() => {});
+        ensureBgVideoPlaying();
       });
       bgVideo.addEventListener("error", () => { bgVideoReady = false; });
+      bgWheelAppleVideo.addEventListener("loadeddata", () => {
+        wheelAppleVideoReady = true;
+      });
+      bgWheelAppleVideo.addEventListener("error", () => { wheelAppleVideoReady = false; });
       characterImg.src = "character.png";
       characterBlinkImg.src = "character-blink.png";
       characterHitImg.src = "character-hit.png";
       characterLoseImg.src = "character-lose.png";
       characterLoseBandageImg.src = "character-lose-bandage.png";
+      characterLoseBruiseImg.src = "character-lose-bruise.png";
       bowImg.src = "pistol.png";
       muzzleImg.src = "muzzle.png";
       appleImg.src = "apple.png";
@@ -1155,17 +1678,61 @@
       bgImg.src = "background.png";
       bgVideo.src = "background.mp4";
       bgVideo.load();
+      bgWheelAppleVideo.src = "wheel-apple-cinematic.mp4";
+      bgWheelAppleVideo.load();
+
+      const wheelImg = new Image();
+      const wheelAppleImg = new Image();
+      const wheelSkullImg = new Image();
+      let wheelSprite = null;
+      let wheelAppleSprite = null;
+      let wheelSkullSprite = null;
+      let wheelAssetsReady = { wheel: false, apple: false, skull: false };
+
+      wheelImg.onload = () => {
+        try { wheelSprite = knockOutDarkBackground(wheelImg, 22); }
+        catch (e) { wheelSprite = wheelImg; }
+        wheelAssetsReady.wheel = true;
+        if (wheelModal.classList.contains("open")) drawWheelFrame(state.wheelRotation || 0);
+      };
+      wheelAppleImg.onload = () => {
+        try { wheelAppleSprite = knockOutDarkBackground(wheelAppleImg, 45); }
+        catch (e) { wheelAppleSprite = wheelAppleImg; }
+        wheelAssetsReady.apple = true;
+        if (wheelModal.classList.contains("open")) drawWheelFrame(state.wheelRotation || 0);
+      };
+      wheelSkullImg.onload = () => {
+        try { wheelSkullSprite = knockOutDarkBackground(wheelSkullImg, 45); }
+        catch (e) { wheelSkullSprite = wheelSkullImg; }
+        wheelAssetsReady.skull = true;
+        if (wheelModal.classList.contains("open")) drawWheelFrame(state.wheelRotation || 0);
+      };
+      wheelImg.onerror = () => { wheelAssetsReady.wheel = false; };
+      wheelAppleImg.onerror = () => { wheelAssetsReady.apple = false; };
+      wheelSkullImg.onerror = () => { wheelAssetsReady.skull = false; };
+      wheelImg.src = "wheel.png";
+      wheelAppleImg.src = "wheel-apple.png";
+      wheelSkullImg.src = "wheel-skull.png";
 
       const sfxShot = new Audio("pistol-shot.mp3");
       const sfxAppleHit = new Audio("apple-hit.mp3");
       const sfxFaceHit = new Audio("ow.mp3");
       const sfxCashOut = new Audio("cash-out.mp3");
+      const sfxWheelSpin = new Audio("wheel-spin.mp3");
+      const sfxWheelLand = new Audio("wheel-land.mp3");
+      const sfxWheelAppleLand = new Audio("wheel-apple-land.mp3");
+      const sfxWheelSkullLand = new Audio("wheel-skull-land.mp3");
+      const sfxStreakClaps = new Audio("streak-claps.mp3");
       const bgMusic = new Audio("ambient.mp3");
       bgMusic.loop = true;
       bgMusic.preload = "auto";
       const AMBIENT_VOL = 0.18;
       const SFX_VOL = 0.85;
-      [sfxShot, sfxAppleHit, sfxFaceHit, sfxCashOut, bgMusic].forEach((a) => {
+      const WHEEL_SPIN_SFX_VOL = 0.9;
+      const WHEEL_LAND_SFX_VOL = 0.95;
+      const WHEEL_APPLE_LAND_SFX_VOL = 0.88;
+      const WHEEL_SKULL_LAND_SFX_VOL = 0.92;
+      [sfxShot, sfxAppleHit, sfxFaceHit, sfxCashOut, sfxWheelSpin, sfxWheelLand, sfxWheelAppleLand, sfxWheelSkullLand, sfxStreakClaps, bgMusic].forEach((a) => {
         a.load();
       });
 
@@ -1195,6 +1762,9 @@
       let sfxCtx = null;
       let loseHitBuffer = null;
       let masterGain = null;
+      let streakTensionNodes = null;
+      let clapsLooping = false;
+      let clapsLoopVol = 0.75;
       // ow.mp3 has ~140ms leading silence
       const LOSE_HIT_OFFSET = 0.14;
 
@@ -1222,6 +1792,13 @@
         sfxAppleHit.volume = sfxV;
         sfxFaceHit.volume = Math.min(1, sfxV);
         sfxCashOut.volume = sfxV;
+        sfxWheelSpin.volume = Math.min(1, sfxV * WHEEL_SPIN_SFX_VOL);
+        sfxWheelLand.volume = Math.min(1, sfxV * WHEEL_LAND_SFX_VOL);
+        sfxWheelAppleLand.volume = Math.min(1, sfxV * WHEEL_APPLE_LAND_SFX_VOL);
+        sfxWheelSkullLand.volume = Math.min(1, sfxV * WHEEL_SKULL_LAND_SFX_VOL);
+        sfxStreakClaps.volume = clapsLooping
+          ? Math.min(1, sfxV * clapsLoopVol)
+          : sfxV;
         if (masterGain) masterGain.gain.value = sfxV * 1.8;
         bgMusic.volume = musicMuted ? 0 : AMBIENT_VOL;
         syncMuteUi();
@@ -1247,6 +1824,7 @@
       function unlockSfx() {
         const ctx = getSfxCtx();
         if (ctx.state === "suspended") ctx.resume();
+        ensureBgVideoPlaying();
       }
 
       function ensureMusicPlaying() {
@@ -1303,6 +1881,194 @@
         } catch (e) { /* ignore autoplay blocks */ }
       }
 
+      function startClapsLoop(vol) {
+        if (vol != null) clapsLoopVol = vol;
+        if (effectiveSfxVolume() <= 0) return;
+        unlockSfx();
+        clapsLooping = true;
+        try {
+          sfxStreakClaps.loop = true;
+          sfxStreakClaps.volume = Math.min(1, effectiveSfxVolume() * clapsLoopVol);
+          const p = sfxStreakClaps.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } catch (e) { /* ignore */ }
+      }
+
+      function stopClapsLoop() {
+        clapsLooping = false;
+        try {
+          sfxStreakClaps.loop = false;
+          sfxStreakClaps.pause();
+          sfxStreakClaps.currentTime = 0;
+        } catch (e) { /* ignore */ }
+      }
+
+      function playStreakClaps(hitNumber) {
+        if (hitNumber >= STREAK_TRIGGER_HITS) {
+          startClapsLoop(STREAK_CLAPS_VOL[hitNumber] || clapsLoopVol);
+          return;
+        }
+        const vol = STREAK_CLAPS_VOL[hitNumber] || 0;
+        if (vol <= 0 || effectiveSfxVolume() <= 0) return;
+        unlockSfx();
+        try {
+          sfxStreakClaps.loop = false;
+          sfxStreakClaps.volume = Math.min(1, effectiveSfxVolume() * vol);
+          sfxStreakClaps.currentTime = 0;
+          const p = sfxStreakClaps.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } catch (e) { /* ignore */ }
+      }
+
+      function playCrowdCheer() {
+        if (effectiveSfxVolume() <= 0) return;
+        unlockSfx();
+        const ctx = getSfxCtx();
+        const dest = masterGain || ctx.destination;
+        const t0 = ctx.currentTime + 0.02;
+        const vol = effectiveSfxVolume() * 0.38;
+        for (let i = 0; i < 6; i++) {
+          const len = Math.floor(ctx.sampleRate * 0.09);
+          const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let j = 0; j < len; j++) data[j] = (Math.random() * 2 - 1) * (1 - j / len);
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          const g = ctx.createGain();
+          const f = ctx.createBiquadFilter();
+          f.type = "bandpass";
+          f.frequency.value = 700 + i * 180;
+          f.Q.value = 0.75;
+          const at = t0 + i * 0.045;
+          g.gain.setValueAtTime(0.001, at);
+          g.gain.linearRampToValueAtTime(vol * (0.65 + i * 0.07), at + 0.025);
+          g.gain.exponentialRampToValueAtTime(0.001, at + 0.18);
+          src.connect(f);
+          f.connect(g);
+          g.connect(dest);
+          src.start(at);
+          src.stop(at + 0.2);
+        }
+      }
+
+      function triggerStreakShake() {
+        if (!sceneStage) return;
+        sceneStage.classList.remove("streak-shake");
+        void sceneStage.offsetWidth;
+        sceneStage.classList.add("streak-shake");
+        setTimeout(() => sceneStage.classList.remove("streak-shake"), 420);
+      }
+
+      function startStreakTensionLayer() {
+        if (streakTensionNodes || musicMuted || effectiveSfxVolume() <= 0) return;
+        unlockSfx();
+        const ctx = getSfxCtx();
+        const dest = masterGain || ctx.destination;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.value = 52;
+        lfo.type = "sine";
+        lfo.frequency.value = 2.4;
+        lfoGain.gain.value = 0.045;
+        gain.gain.value = 0.001;
+        lfo.connect(lfoGain);
+        lfoGain.connect(gain.gain);
+        osc.connect(gain);
+        gain.connect(dest);
+        osc.start();
+        lfo.start();
+        gain.gain.setTargetAtTime(0.055 * effectiveSfxVolume(), ctx.currentTime, 0.35);
+        streakTensionNodes = { osc, gain, lfo, lfoGain };
+      }
+
+      function stopStreakTensionLayer() {
+        if (!streakTensionNodes) return;
+        const ctx = getSfxCtx();
+        const { osc, gain, lfo, lfoGain } = streakTensionNodes;
+        streakTensionNodes = null;
+        try {
+          gain.gain.setTargetAtTime(0.001, ctx.currentTime, 0.2);
+          setTimeout(() => {
+            try { osc.stop(); lfo.stop(); } catch (e) { /* ignore */ }
+            try { osc.disconnect(); gain.disconnect(); lfo.disconnect(); lfoGain.disconnect(); } catch (e2) { /* ignore */ }
+          }, 280);
+        } catch (e) { /* ignore */ }
+      }
+
+      function onStreakAppleLand(nextHit) {
+        if (nextHit >= 4) playStreakClaps(nextHit);
+        if (nextHit >= 3) {
+          triggerStreakShake();
+          playCrowdCheer();
+        }
+      }
+
+      function onStreakHitRegistered(hitCount) {
+        if (hitCount >= 4) startStreakTensionLayer();
+        if (hitCount === STREAK_TRIGGER_HITS) stopStreakTensionLayer();
+      }
+
+      function flightTimings(f) {
+        if (!f || !f.slowMo) {
+          return { pullMs: PULL_MS, snapMs: SNAP_MS, flightMs: FLIGHT_MS, settleMs: SETTLE_MS };
+        }
+        return {
+          pullMs: PULL_MS * 2.4,
+          snapMs: SNAP_MS * 2.4,
+          flightMs: FLIGHT_MS * STREAK_SLOW_MO_MULT,
+          settleMs: SETTLE_MS * 2.1
+        };
+      }
+
+      function stopWheelSpinSfx() {
+        try {
+          sfxWheelSpin.pause();
+          sfxWheelSpin.currentTime = 0;
+        } catch (e) { /* ignore */ }
+      }
+
+      function playWheelSpinSfx() {
+        if (effectiveSfxVolume() <= 0) return;
+        unlockSfx();
+        ensureMusicPlaying();
+        try {
+          sfxWheelSpin.pause();
+          sfxWheelSpin.currentTime = 0;
+          sfxWheelSpin.volume = Math.min(1, effectiveSfxVolume() * WHEEL_SPIN_SFX_VOL);
+          const p = sfxWheelSpin.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } catch (e) { /* ignore */ }
+      }
+
+      function playWheelLandSfx(outcome) {
+        stopWheelSpinSfx();
+        if (effectiveSfxVolume() <= 0) return;
+        unlockSfx();
+        ensureMusicPlaying();
+        const isSkull = outcome === "skull";
+        const isApple = outcome === "apple";
+        const audio = isSkull ? sfxWheelSkullLand : (isApple ? sfxWheelAppleLand : sfxWheelLand);
+        const volMult = isSkull
+          ? WHEEL_SKULL_LAND_SFX_VOL
+          : (isApple ? WHEEL_APPLE_LAND_SFX_VOL : WHEEL_LAND_SFX_VOL);
+        try {
+          sfxWheelLand.pause();
+          sfxWheelLand.currentTime = 0;
+          sfxWheelAppleLand.pause();
+          sfxWheelAppleLand.currentTime = 0;
+          sfxWheelSkullLand.pause();
+          sfxWheelSkullLand.currentTime = 0;
+          audio.pause();
+          audio.currentTime = 0;
+          audio.volume = Math.min(1, effectiveSfxVolume() * volMult);
+          const p = audio.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } catch (e) { /* ignore */ }
+      }
+
       function playLoseExhale() {
         if (effectiveSfxVolume() <= 0) return;
         unlockSfx();
@@ -1335,9 +2101,13 @@
         serverSeedHash: "",
         clientSeed: "",
         nonce: 0,
+        wheelNonce: 0,
         revealed: false,
         lastRoll: null,
-        lastOutcome: null
+        lastOutcome: null,
+        lastWheelRoll: null,
+        lastWheelSlice: null,
+        lastWheelOutcome: null
       };
 
       function randomSeed() {
@@ -1378,15 +2148,27 @@
           const label = fairness.lastOutcome === "hit" ? "apple hit" : "face hit";
           rtpLastRoll.textContent = fairness.lastRoll.toFixed(8) + " → " + label;
         }
+        rtpWheelNonce.textContent = String(fairness.wheelNonce);
+        if (fairness.lastWheelRoll == null) {
+          rtpLastWheelRoll.textContent = "—";
+        } else {
+          const wLabel = fairness.lastWheelOutcome === "apple" ? "apple" : "skull";
+          rtpLastWheelRoll.textContent = fairness.lastWheelRoll.toFixed(8)
+            + " → slice " + fairness.lastWheelSlice + " (" + wLabel + ")";
+        }
       }
 
       async function commitServerSeed() {
         fairness.serverSeed = randomSeed();
         fairness.serverSeedHash = await sha256Hex(fairness.serverSeed);
         fairness.nonce = 0;
+        fairness.wheelNonce = 0;
         fairness.revealed = false;
         fairness.lastRoll = null;
         fairness.lastOutcome = null;
+        fairness.lastWheelRoll = null;
+        fairness.lastWheelSlice = null;
+        fairness.lastWheelOutcome = null;
         updateFairnessUi();
       }
 
@@ -1398,6 +2180,22 @@
       async function fairRollValue(serverSeed, clientSeed, nonce) {
         const digest = await sha256Hex(serverSeed + ":" + clientSeed + ":" + nonce);
         return parseInt(digest.slice(0, 8), 16) / 0x100000000;
+      }
+
+      async function fairWheelRollValue(serverSeed, clientSeed, wheelNonce) {
+        const digest = await sha256Hex(serverSeed + ":" + clientSeed + ":wheel:" + wheelNonce);
+        return parseInt(digest.slice(0, 8), 16) / 0x100000000;
+      }
+
+      async function rollWheelSlice() {
+        fairness.wheelNonce += 1;
+        const roll = await fairWheelRollValue(fairness.serverSeed, fairness.clientSeed, fairness.wheelNonce);
+        const slice = Math.min(WHEEL_SLICE_COUNT - 1, Math.floor(roll * WHEEL_SLICE_COUNT));
+        fairness.lastWheelRoll = roll;
+        fairness.lastWheelSlice = slice;
+        fairness.lastWheelOutcome = WHEEL_SLICES[slice];
+        updateFairnessUi();
+        return slice;
       }
 
       const state = {
@@ -1419,10 +2217,11 @@
         appleDamaged: false,
         faceCensored: false,
         faceHurt: false,
-        faceHurtVariant: "patch", // "patch" | "bandage"
+        faceHurtVariant: "patch", // "patch" | "bandage" | "bruise"
         charSway: 0,
         charShiver: 0,
         blinkTimer: 0,
+        blinkNextAt: 0,
         eyesOpen: true,
         eyeDart: 0,
         eyeDartTarget: 0,
@@ -1440,12 +2239,73 @@
         overlayTimer: null,
         faceCensorTimer: null,
         exhaleTimer: null,
+        wheelOffer: false,
+        wheelMode: null,
+        wheelSpinning: false,
+        wheelSlice: null,
+        wheelRotation: 0,
+        wheelSpinStart: 0,
+        wheelSpinFrom: 0,
+        wheelSpinTo: 0,
+        wheelBuyinPaid: 0,
+        wheelRevealing: false,
+        wheelRevealSlice: null,
+        wheelCinematic: false,
+        wheelIntro: false,
+        wheelIntroTimer: null,
+        wheelAppleVideoActive: false,
         lastTime: 0,
         dpr: 1
       };
 
+      const LOSE_VARIANTS = ["patch", "bandage", "bruise"];
+
+      function pickLoseVariant() {
+        return LOSE_VARIANTS[Math.floor(Math.random() * LOSE_VARIANTS.length)];
+      }
+
+      function getLoseSprites() {
+        return {
+          patch: charLoseSprite || (assetsReady.characterLose ? characterLoseImg : null),
+          bandage: charLoseBandageSprite || (assetsReady.characterLoseBandage ? characterLoseBandageImg : null),
+          bruise: charLoseBruiseSprite || (assetsReady.characterLoseBruise ? characterLoseBruiseImg : null)
+        };
+      }
+
+      function getLoseSprite(variant) {
+        const s = getLoseSprites();
+        if (variant === "bandage") return s.bandage || s.patch || s.bruise;
+        if (variant === "bruise") return s.bruise || s.patch || s.bandage;
+        return s.patch || s.bandage || s.bruise;
+      }
+
       function formatMoney(n) {
         return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function wheelBuyinCostAmount() {
+        return Math.round(state.bet * BUYIN_COST_MULT * 100) / 100;
+      }
+
+      function wheelBuyinPrizeAmount() {
+        return Math.round(state.bet * BUYIN_APPLE_MULT * 100) / 100;
+      }
+
+      function openWheelBuyinConfirm() {
+        const cost = wheelBuyinCostAmount();
+        const prize = wheelBuyinPrizeAmount();
+        wheelBuyinConfirmCost.textContent = BUYIN_COST_MULT + "× bet (" + formatMoney(cost) + ")";
+        wheelBuyinConfirmBet.textContent = formatMoney(state.bet);
+        wheelBuyinConfirmPrize.textContent = BUYIN_APPLE_MULT + "× bet";
+        wheelBuyinConfirmPrizeAmt.textContent = formatMoney(prize);
+        btnWheelBuyinConfirm.textContent = "Spin — " + formatMoney(cost);
+        wheelBuyinConfirmModal.classList.add("open");
+        updateUI();
+      }
+
+      function closeWheelBuyinConfirm() {
+        wheelBuyinConfirmModal.classList.remove("open");
+        updateUI();
       }
 
       function clampBet(v) {
@@ -1509,6 +2369,7 @@
         helpModal.classList.remove("open");
         try { localStorage.setItem(HELP_KEY, "1"); } catch (e) { /* ignore */ }
         ensureMusicPlaying();
+        ensureBgVideoPlaying();
       }
 
       function openRtp() {
@@ -1520,6 +2381,549 @@
         rtpModal.classList.remove("open");
       }
 
+      function wheelRotationForSlice(sliceIndex) {
+        const sliceCenter = sliceIndex * WHEEL_SLICE_DEG + WHEEL_SLICE_DEG * 0.5;
+        return 360 - sliceCenter;
+      }
+
+      function resizeWheelCanvas() {
+        const rect = wheelCanvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const side = Math.min(rect.width, rect.height);
+        const px = Math.max(320, Math.round(Math.min(side, 420) * dpr));
+        if (wheelCanvas.width !== px || wheelCanvas.height !== px) {
+          wheelCanvas.width = px;
+          wheelCanvas.height = px;
+        }
+      }
+
+      function drawWheelFrame(rotationDeg, highlightSlice) {
+        resizeWheelCanvas();
+        const size = wheelCanvas.width;
+        const cx = size / 2;
+        const cy = size / 2;
+        const outerR = size * 0.47;
+        const rimInnerR = size * 0.34;
+        const iconR = size * 0.395;
+        const iconSize = size * 0.22;
+        const wheelArtSize = size * 0.96;
+        const hl = highlightSlice != null ? highlightSlice : -1;
+        wheelCtx.clearRect(0, 0, size, size);
+
+        wheelCtx.save();
+        wheelCtx.translate(cx, cy);
+        wheelCtx.rotate((rotationDeg * Math.PI) / 180);
+
+        const wheelArt = wheelSprite || (wheelAssetsReady.wheel ? wheelImg : null);
+        if (wheelArt) {
+          wheelCtx.drawImage(
+            wheelArt,
+            -wheelArtSize / 2,
+            -wheelArtSize / 2,
+            wheelArtSize,
+            wheelArtSize
+          );
+        } else {
+          wheelCtx.beginPath();
+          wheelCtx.arc(0, 0, outerR + size * 0.02, 0, Math.PI * 2);
+          wheelCtx.fillStyle = "rgba(62, 38, 22, 0.9)";
+          wheelCtx.fill();
+          wheelCtx.strokeStyle = "rgba(232, 197, 71, 0.55)";
+          wheelCtx.lineWidth = Math.max(3, size * 0.01);
+          wheelCtx.stroke();
+        }
+
+        for (let i = 0; i < WHEEL_SLICE_COUNT; i++) {
+          const start = (i * WHEEL_SLICE_DEG - 90) * Math.PI / 180;
+          const end = ((i + 1) * WHEEL_SLICE_DEG - 90) * Math.PI / 180;
+          const isApple = WHEEL_SLICES[i] === "apple";
+          const isHighlight = hl === i;
+          wheelCtx.beginPath();
+          wheelCtx.arc(0, 0, outerR, start, end);
+          wheelCtx.arc(0, 0, rimInnerR, end, start, true);
+          wheelCtx.closePath();
+          wheelCtx.fillStyle = isHighlight
+            ? (isApple ? "rgba(80, 200, 120, 0.55)" : "rgba(200, 70, 60, 0.55)")
+            : (isApple ? "rgba(36, 110, 62, 0.14)" : "rgba(100, 28, 24, 0.14)");
+          wheelCtx.fill();
+          if (isHighlight) {
+            wheelCtx.strokeStyle = "rgba(255, 230, 140, 0.95)";
+            wheelCtx.lineWidth = Math.max(3, size * 0.01);
+            wheelCtx.stroke();
+          }
+        }
+
+        for (let i = 0; i < WHEEL_SLICE_COUNT; i++) {
+          const start = (i * WHEEL_SLICE_DEG - 90) * Math.PI / 180;
+          const end = ((i + 1) * WHEEL_SLICE_DEG - 90) * Math.PI / 180;
+          const mid = (start + end) / 2;
+          const ix = Math.cos(mid) * iconR;
+          const iy = Math.sin(mid) * iconR;
+          const isApple = WHEEL_SLICES[i] === "apple";
+          const icon = isApple
+            ? (wheelAppleSprite || (wheelAssetsReady.apple ? wheelAppleImg : null))
+            : (wheelSkullSprite || (wheelAssetsReady.skull ? wheelSkullImg : null));
+          const isHighlight = hl === i;
+          const drawIconSize = isHighlight ? iconSize * 1.12 : iconSize;
+          if (icon && (icon.naturalWidth || icon.width)) {
+            wheelCtx.save();
+            wheelCtx.translate(ix, iy);
+            const iconRot = mid + Math.PI / 2;
+            wheelCtx.rotate(iconRot);
+            wheelCtx.shadowColor = isHighlight ? "rgba(255, 220, 120, 0.85)" : "rgba(0, 0, 0, 0.55)";
+            wheelCtx.shadowBlur = isHighlight ? size * 0.028 : size * 0.012;
+            wheelCtx.drawImage(icon, -drawIconSize / 2, -drawIconSize / 2, drawIconSize, drawIconSize);
+            wheelCtx.restore();
+          } else {
+            wheelCtx.fillStyle = isApple ? "#c44" : "#ddd";
+            wheelCtx.font = "bold " + Math.round(iconSize * 0.55) + "px sans-serif";
+            wheelCtx.textAlign = "center";
+            wheelCtx.textBaseline = "middle";
+            wheelCtx.fillText(isApple ? "🍎" : "☠", ix, iy);
+          }
+        }
+
+        wheelCtx.restore();
+
+        wheelCtx.beginPath();
+        wheelCtx.arc(cx, cy, outerR + size * 0.008, 0, Math.PI * 2);
+        wheelCtx.strokeStyle = "rgba(232, 197, 71, 0.65)";
+        wheelCtx.lineWidth = Math.max(4, size * 0.012);
+        wheelCtx.stroke();
+      }
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      /** Single smooth ease-out: velocity falls continuously from fast start to zero at landing. */
+      function wheelSpinEase(t) {
+        const clamped = Math.min(1, Math.max(0, t));
+        return 1 - Math.pow(1 - clamped, 3.6);
+      }
+
+      function clearWheelResultReveal() {
+        wheelResultReveal.textContent = "";
+        wheelResultReveal.className = "wheel-result-reveal";
+      }
+
+      function showWheelResultReveal(sliceIndex) {
+        stopClapsLoop();
+        const outcome = WHEEL_SLICES[sliceIndex];
+        state.wheelRevealing = true;
+        state.wheelRevealSlice = sliceIndex;
+        wheelResultReveal.textContent = outcome === "apple" ? "Ahoy!" : "Skulls";
+        wheelResultReveal.className = "wheel-result-reveal show "
+          + (outcome === "apple" ? "is-apple" : "is-skull");
+        playWheelLandSfx(outcome);
+        drawWheelFrame(state.wheelRotation, sliceIndex);
+      }
+
+      function hideWheelResultReveal() {
+        state.wheelRevealing = false;
+        state.wheelRevealSlice = null;
+        clearWheelResultReveal();
+      }
+
+      function updateWheelModalCopy() {
+        if (state.wheelMode === "streak") {
+          wheelTitle.textContent = "Ship's Wheel Gamble";
+          wheelSub.textContent = "5 hits · 32× — take the loot or spin!";
+          const pot = state.roundBet * STREAK_SAFE_MULT;
+          wheelStreakInfo.textContent = "At stake: " + formatMoney(pot)
+            + " · Gamble for " + STREAK_JACKPOT_MULT + "× (1-in-3)";
+          wheelStreakInfo.style.display = "block";
+          wheelActions.className = "wheel-actions streak";
+          wheelActions.style.display = "grid";
+          btnWheelTake.textContent = "Take " + STREAK_SAFE_MULT + "×";
+          btnWheelGamble.textContent = "Gamble";
+        } else if (state.wheelMode === "buyin") {
+          wheelTitle.textContent = "";
+          wheelSub.textContent = "";
+          wheelStreakInfo.textContent = "";
+          wheelStreakInfo.style.display = "none";
+          wheelActions.style.display = "none";
+        }
+      }
+
+      /** Short drumroll + cheer sting for 5-hit wheel intro (SFX only — no music ducking). */
+      function playWheelStreakStinger() {
+        if (effectiveSfxVolume() <= 0) return;
+        unlockSfx();
+        const ctx = getSfxCtx();
+        const dest = masterGain || ctx.destination;
+        const t0 = ctx.currentTime + 0.02;
+        const vol = effectiveSfxVolume() * 0.42;
+
+        for (let i = 0; i < 9; i++) {
+          const hitAt = t0 + i * 0.075;
+          const osc = ctx.createOscillator();
+          const hitGain = ctx.createGain();
+          osc.type = i < 6 ? "triangle" : "sine";
+          osc.frequency.setValueAtTime(90 + i * 14, hitAt);
+          hitGain.gain.setValueAtTime(vol * (i < 6 ? 0.55 : 0.75), hitAt);
+          hitGain.gain.exponentialRampToValueAtTime(0.001, hitAt + 0.14);
+          osc.connect(hitGain);
+          hitGain.connect(dest);
+          osc.start(hitAt);
+          osc.stop(hitAt + 0.16);
+        }
+
+        setTimeout(() => {
+          if (effectiveSfxVolume() <= 0) return;
+          try {
+            sfxCashOut.pause();
+            sfxCashOut.currentTime = 0;
+            sfxCashOut.volume = Math.min(1, effectiveSfxVolume() * 0.55);
+            sfxCashOut.play().catch(() => {});
+          } catch (e) { /* ignore */ }
+        }, 620);
+      }
+
+      function clearWheelStreakIntro() {
+        clearTimeout(state.wheelIntroTimer);
+        state.wheelIntroTimer = null;
+        state.wheelIntro = false;
+        wheelModal.classList.remove("streak-intro", "intro-ready");
+        if (sceneStage) sceneStage.classList.remove("wheel-gold-pulse");
+      }
+
+      function finishWheelStreakIntro() {
+        state.wheelIntro = false;
+        state.wheelIntroTimer = null;
+        wheelModal.classList.remove("streak-intro");
+        wheelModal.classList.add("intro-ready");
+        if (sceneStage) sceneStage.classList.remove("wheel-gold-pulse");
+        finishWheelModalOpen();
+      }
+
+      function redrawWheelCanvas() {
+        resizeWheelCanvas();
+        drawWheelFrame(state.wheelRotation || 0, state.wheelRevealSlice);
+      }
+
+      function finishWheelModalOpen() {
+        hideWheelResultReveal();
+        state.wheelRotation = state.wheelRotation || 0;
+        wheelModalInner.classList.remove("wheel-spinning");
+        requestAnimationFrame(() => {
+          redrawWheelCanvas();
+          requestAnimationFrame(redrawWheelCanvas);
+        });
+        updateUI();
+      }
+
+      function openWheelModal() {
+        updateWheelModalCopy();
+        clearWheelStreakIntro();
+        hideWheelResultReveal();
+        state.wheelRotation = state.wheelRotation || 0;
+        wheelModalInner.classList.remove("wheel-spinning");
+        wheelModal.classList.add("open");
+        requestAnimationFrame(() => {
+          redrawWheelCanvas();
+        });
+
+        const runStreakIntro = state.wheelMode === "streak" && state.wheelOffer;
+        if (runStreakIntro) {
+          state.wheelIntro = true;
+          wheelModal.classList.remove("intro-ready");
+          wheelModal.classList.add("streak-intro");
+          if (sceneStage) sceneStage.classList.add("wheel-gold-pulse");
+          try { playWheelStreakStinger(); } catch (e) { /* ignore */ }
+          clearTimeout(state.wheelIntroTimer);
+          state.wheelIntroTimer = setTimeout(finishWheelStreakIntro, WHEEL_STREAK_INTRO_MS);
+          updateUI();
+          return;
+        }
+
+        finishWheelModalOpen();
+      }
+
+      function closeWheelModal() {
+        clearWheelStreakIntro();
+        wheelModal.classList.remove("open");
+        wheelModalInner.classList.remove("wheel-spinning");
+        wheelModalInner.classList.remove("wheel-revealing");
+        hideWheelResultReveal();
+        updateUI();
+      }
+
+      function takeWheelLoot() {
+        if (state.wheelSpinning || state.wheelIntro) return;
+        if (!state.wheelOffer || state.wheelMode !== "streak") return;
+        stopClapsLoop();
+        state.wheelOffer = false;
+        state.wheelMode = null;
+        closeWheelModal();
+        cashOut();
+      }
+
+      async function spinWheel() {
+        if (state.wheelSpinning) return;
+        if (state.wheelMode !== "streak" && state.wheelMode !== "buyin") return;
+
+        unlockSfx();
+        ensureMusicPlaying();
+        state.wheelSpinning = true;
+        wheelModalInner.classList.add("wheel-spinning");
+        wheelModalInner.classList.remove("wheel-revealing");
+        clearWheelResultReveal();
+        if (state.wheelMode === "buyin") {
+          wheelTitle.textContent = "";
+          wheelSub.textContent = "";
+          wheelStreakInfo.textContent = "";
+          wheelStreakInfo.style.display = "none";
+        }
+        updateUI();
+
+        let slice;
+        try {
+          slice = await rollWheelSlice();
+        } catch (err) {
+          state.wheelSpinning = false;
+          stopClapsLoop();
+          wheelModalInner.classList.remove("wheel-spinning");
+          updateUI();
+          throw err;
+        }
+        state.wheelSlice = slice;
+
+        const fullTurns = 5 + Math.floor(Math.random() * 3);
+        const targetRot = wheelRotationForSlice(slice);
+        const from = state.wheelRotation;
+        const minTravel = fullTurns * 360;
+        let to = from + minTravel;
+        let endMod = ((to % 360) + 360) % 360;
+        let adjust = targetRot - endMod;
+        if (adjust < 0) adjust += 360;
+        to += adjust;
+        while (to < from + 720) to += 360;
+
+        state.wheelSpinStart = performance.now();
+        state.wheelSpinFrom = from;
+        state.wheelSpinTo = to;
+
+        playWheelSpinSfx();
+        if (state.wheelMode === "streak" && clapsLooping) {
+          clapsLoopVol = STREAK_CLAPS_VOL[STREAK_TRIGGER_HITS];
+        }
+
+        return new Promise((resolve) => {
+          function tick(now) {
+            const elapsed = now - state.wheelSpinStart;
+            const t = Math.min(1, elapsed / WHEEL_SPIN_MS);
+            const eased = wheelSpinEase(t);
+            if (clapsLooping && state.wheelMode === "streak") {
+              const rampVol = STREAK_CLAPS_VOL[STREAK_TRIGGER_HITS]
+                + (STREAK_CLAPS_PEAK_VOL - STREAK_CLAPS_VOL[STREAK_TRIGGER_HITS]) * eased;
+              clapsLoopVol = rampVol;
+              sfxStreakClaps.volume = Math.min(1, effectiveSfxVolume() * rampVol);
+            }
+            state.wheelRotation = state.wheelSpinFrom + (state.wheelSpinTo - state.wheelSpinFrom) * eased;
+            drawWheelFrame(state.wheelRotation);
+            if (t < 1) {
+              requestAnimationFrame(tick);
+            } else {
+              wheelModalInner.classList.remove("wheel-spinning");
+              wheelModalInner.classList.add("wheel-revealing");
+              showWheelResultReveal(slice);
+              resolve();
+            }
+          }
+          requestAnimationFrame(tick);
+        }).then(() => new Promise((resolve) => {
+          setTimeout(resolve, WHEEL_RESULT_HOLD_MS);
+        })).then(() => {
+          wheelModalInner.classList.remove("wheel-revealing");
+          hideWheelResultReveal();
+          resolveWheelOutcome();
+        });
+      }
+
+      function gambleWheel() {
+        if (state.wheelSpinning || state.wheelIntro) return;
+        if (!wheelModal.classList.contains("open")) return;
+        if (state.wheelMode !== "streak") return;
+        if (!state.wheelOffer && !state.roundActive) return;
+        spinWheel().catch((err) => {
+          console.error("Wheel spin failed:", err);
+          state.wheelSpinning = false;
+          wheelModalInner.classList.remove("wheel-spinning", "wheel-revealing");
+          updateUI();
+          showToast("Wheel spin failed — try again");
+        });
+      }
+
+      function resolveWheelStreakApple() {
+        const win = Math.round(state.roundBet * STREAK_JACKPOT_MULT * 100) / 100;
+        state.wheelMode = null;
+        playWheelCinematic("hit", {
+          finalTitle: "Bullseye!",
+          finalSub: STREAK_JACKPOT_MULT + "× · " + formatMoney(win),
+          finalType: "hit",
+          onFinish: () => {
+            playSfx(sfxCashOut);
+            state.balance = Math.round((state.balance + win) * 100) / 100;
+            pulseBalance();
+            advanceSeason();
+            resetRound();
+          }
+        });
+      }
+
+      function resolveWheelStreakSkull() {
+        state.wheelMode = null;
+        playWheelCinematic("hitPerson", {
+          finalTitle: "Better luck next time!",
+          finalSub: "",
+          finalType: "miss",
+          onFinish: () => {
+            advanceSeason();
+            revealServerSeed();
+            state.roundActive = false;
+            state.roundBet = 0;
+            state.hits = 0;
+            state.multiplier = 1;
+            state.stuckArrows = [];
+            state.thumpStars = [];
+            state.flight = null;
+            state.arrow = null;
+            state.arrowTrail = [];
+            state.animating = false;
+            state.handPull = 0;
+            state.appleDamaged = false;
+            state.appleWobble = 0;
+            updateUI();
+          }
+        });
+      }
+
+      function resolveWheelBuyinApple() {
+        const prize = Math.round(state.bet * BUYIN_APPLE_MULT * 100) / 100;
+        state.wheelMode = null;
+        playWheelCinematic("hit", {
+          finalTitle: "Bullseye!",
+          finalSub: "Won " + formatMoney(prize),
+          finalType: "hit",
+          onFinish: () => {
+            playSfx(sfxCashOut);
+            state.balance = Math.round((state.balance + prize) * 100) / 100;
+            pulseBalance();
+            state.wheelBuyinPaid = 0;
+            revealServerSeed();
+            updateUI();
+          }
+        });
+      }
+
+      function resolveWheelBuyinSkull() {
+        const lost = state.wheelBuyinPaid;
+        state.wheelMode = null;
+        playWheelCinematic("hitPerson", {
+          finalTitle: "Better luck next time!",
+          finalSub: lost > 0 ? "Lost " + formatMoney(lost) : "",
+          finalType: "miss",
+          onFinish: () => {
+            state.wheelBuyinPaid = 0;
+            revealServerSeed();
+            updateUI();
+          }
+        });
+      }
+
+      function playWheelCinematic(outcome, opts) {
+        const { finalTitle, finalSub, finalType, onFinish } = opts;
+        closeWheelModal();
+        hideWheelResultReveal();
+        state.wheelOffer = false;
+        state.wheelSpinning = false;
+        state.wheelCinematic = true;
+        stopWheelAppleCinematicVideo();
+
+        state.faceCensored = false;
+        state.faceHurt = false;
+        state.faceHurtVariant = "patch";
+        state.appleDamaged = false;
+        state.appleWobble = 0;
+        state.flinch = 0;
+        state.eyesOpen = true;
+        state.blinkEnd = 0;
+        clearTimeout(state.faceCensorTimer);
+        state.faceCensorTimer = null;
+
+        if (outcome === "hit") {
+          startWheelAppleCinematicVideo();
+        }
+
+        startFlight(outcome, {
+          cinematic: true,
+          onCinematicComplete: () => {
+            stopWheelAppleCinematicVideo();
+            showOverlay(finalType, finalTitle, finalSub || "", WHEEL_CINEMATIC_FINAL_MS);
+            setTimeout(() => {
+              state.wheelCinematic = false;
+              if (onFinish) onFinish();
+              updateUI();
+            }, WHEEL_CINEMATIC_FINAL_MS);
+          }
+        });
+        updateUI();
+      }
+
+      function resolveWheelOutcome() {
+        const outcome = WHEEL_SLICES[state.wheelSlice];
+        if (state.wheelMode === "streak") {
+          if (outcome === "apple") resolveWheelStreakApple();
+          else resolveWheelStreakSkull();
+        } else if (state.wheelMode === "buyin") {
+          if (outcome === "apple") resolveWheelBuyinApple();
+          else resolveWheelBuyinSkull();
+        }
+      }
+
+      function promptWheelBuyin() {
+        if (state.roundActive || state.animating || state.wheelSpinning || state.wheelOffer) return;
+        if (wheelBuyinConfirmModal.classList.contains("open")) return;
+        const cost = wheelBuyinCostAmount();
+        if (state.balance < cost - 1e-9) {
+          showToast("Need " + formatMoney(cost) + " to play");
+          return;
+        }
+        openWheelBuyinConfirm();
+      }
+
+      async function confirmWheelBuyin() {
+        if (state.roundActive || state.animating || state.wheelSpinning || state.wheelOffer) return;
+        const cost = wheelBuyinCostAmount();
+        if (state.balance < cost - 1e-9) {
+          showToast("Need " + formatMoney(cost) + " to play");
+          closeWheelBuyinConfirm();
+          return;
+        }
+        closeWheelBuyinConfirm();
+        unlockSfx();
+        ensureMusicPlaying();
+        if (fairness.revealed) await commitServerSeed();
+        state.balance = Math.round((state.balance - cost) * 100) / 100;
+        state.wheelBuyinPaid = cost;
+        pulseBalance();
+        state.wheelMode = "buyin";
+        openWheelModal();
+        spinWheel().catch((err) => {
+          console.error("Wheel spin failed:", err);
+          state.wheelSpinning = false;
+          wheelModalInner.classList.remove("wheel-spinning", "wheel-revealing");
+          state.balance = Math.round((state.balance + cost) * 100) / 100;
+          state.wheelBuyinPaid = 0;
+          state.wheelMode = null;
+          closeWheelModal();
+          pulseBalance();
+          updateUI();
+          showToast("Wheel spin failed — bet refunded");
+        });
+      }
+
       function pulseBalance() {
         balanceDisplay.classList.add("pulse");
         setTimeout(() => balanceDisplay.classList.remove("pulse"), 220);
@@ -1528,15 +2932,27 @@
       function updateUI() {
         balanceDisplay.textContent = formatMoney(state.balance);
         multDisplay.textContent = state.multiplier.toFixed(2) + "×";
+        multDisplay.className = "value mult"
+          + (state.hits >= 4 ? " mult-streak-hot" : state.hits >= 3 ? " mult-streak-warm" : "");
         const pot = state.roundActive ? state.roundBet * state.multiplier : 0;
         potentialDisplay.textContent = formatMoney(pot);
         betInput.value = state.bet.toFixed(2);
-        betInput.disabled = state.roundActive || state.animating;
+        const wheelBlocked = state.wheelOffer || state.wheelSpinning || state.wheelCinematic || state.wheelIntro
+          || wheelBuyinConfirmModal.classList.contains("open");
+        betInput.disabled = state.roundActive || state.animating || wheelBlocked;
         document.querySelectorAll(".btn-quick").forEach((b) => {
-          b.disabled = state.roundActive || state.animating;
+          b.disabled = state.roundActive || state.animating || wheelBlocked;
         });
-        btnShoot.disabled = state.animating || (!state.roundActive && state.balance < state.bet - 1e-9);
-        btnCash.disabled = !state.roundActive || state.hits < 1;
+        btnShoot.disabled = state.animating || wheelBlocked
+          || state.wheelOffer
+          || (!state.roundActive && state.balance < state.bet - 1e-9);
+        btnCash.disabled = !state.roundActive || state.hits < 1 || state.wheelOffer || state.wheelSpinning;
+        const buyinCost = wheelBuyinCostAmount();
+        btnWheelBuyin.disabled = state.roundActive || state.animating || wheelBlocked
+          || state.balance < buyinCost - 1e-9;
+        const wheelChoiceLocked = state.wheelIntro || state.wheelSpinning;
+        btnWheelTake.disabled = wheelChoiceLocked;
+        btnWheelGamble.disabled = wheelChoiceLocked;
       }
 
       function advanceSeason() {
@@ -1577,6 +2993,20 @@
         state.flinch = 0;
         state.appleDamaged = false;
         state.appleWobble = 0;
+        state.wheelOffer = false;
+        state.wheelMode = null;
+        state.wheelSpinning = false;
+        state.wheelSlice = null;
+        state.wheelBuyinPaid = 0;
+        state.wheelRevealing = false;
+        state.wheelRevealSlice = null;
+        state.wheelCinematic = false;
+        state.wheelIntro = false;
+        clearTimeout(state.wheelIntroTimer);
+        state.wheelIntroTimer = null;
+        stopStreakTensionLayer();
+        stopClapsLoop();
+        stopWheelAppleCinematicVideo();
         // Keep face censor through the umph SFX — cleared by timer / next shot
         updateUI();
       }
@@ -1639,31 +3069,69 @@
         }
       }
 
+      function startWheelAppleCinematicVideo() {
+        if (!wheelAppleVideoReady) return;
+        state.wheelAppleVideoActive = true;
+        unlockSfx();
+        try {
+          bgWheelAppleVideo.pause();
+          bgWheelAppleVideo.currentTime = 0;
+          const p = bgWheelAppleVideo.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } catch (e) { /* ignore */ }
+      }
+
+      function stopWheelAppleCinematicVideo() {
+        state.wheelAppleVideoActive = false;
+        try {
+          bgWheelAppleVideo.pause();
+          bgWheelAppleVideo.currentTime = 0;
+        } catch (e) { /* ignore */ }
+      }
+
+      function updateCharacterBlink(now) {
+        if (state.faceHurt || state.appleDamaged || state.faceCensored) return;
+        if (!state.blinkNextAt) state.blinkNextAt = now + 1400 + Math.random() * 900;
+        if (!state.blinkEnd && now >= state.blinkNextAt) {
+          state.eyesOpen = false;
+          state.blinkEnd = now + 150;
+          state.blinkNextAt = now + 2800 + Math.random() * 1400;
+        }
+        if (state.blinkEnd && now >= state.blinkEnd) {
+          state.eyesOpen = true;
+          state.blinkEnd = 0;
+        }
+      }
+
       function drawBackground(layout) {
         const { w, h } = layout;
-        ensureBgVideoPlaying();
-        const useVideo = bgVideoReady && bgVideo.readyState >= 2;
-        if (useVideo) {
-          const iw = bgVideo.videoWidth || 1;
-          const ih = bgVideo.videoHeight || 1;
-          const scale = Math.max(w / iw, h / ih);
-          const dw = iw * scale;
-          const dh = ih * scale;
-          const dx = (w - dw) / 2;
-          const dy = (h - dh) / 2;
-          ctx.drawImage(bgVideo, dx, dy, dw, dh);
-          return;
-        }
-        const sprite = bgSprite || (assetsReady.bg ? bgImg : null);
-        if (sprite) {
-          const iw = sprite.naturalWidth || sprite.width;
-          const ih = sprite.naturalHeight || sprite.height;
+
+        function drawCover(img, iw, ih) {
           const scale = Math.max(w / Math.max(iw, 1), h / Math.max(ih, 1));
           const dw = iw * scale;
           const dh = ih * scale;
           const dx = (w - dw) / 2;
           const dy = (h - dh) / 2;
-          ctx.drawImage(sprite, dx, dy, dw, dh);
+          ctx.drawImage(img, dx, dy, dw, dh);
+        }
+
+        if (state.wheelAppleVideoActive
+          && wheelAppleVideoReady
+          && bgWheelAppleVideo.readyState >= 2
+          && bgWheelAppleVideo.videoWidth > 0) {
+          drawCover(bgWheelAppleVideo, bgWheelAppleVideo.videoWidth, bgWheelAppleVideo.videoHeight);
+          return;
+        }
+
+        ensureBgVideoPlaying();
+        if (bgVideoReady && bgVideo.readyState >= 2 && bgVideo.videoWidth > 0) {
+          drawCover(bgVideo, bgVideo.videoWidth, bgVideo.videoHeight);
+          return;
+        }
+
+        const sprite = bgSprite || (assetsReady.bg ? bgImg : null);
+        if (sprite) {
+          drawCover(sprite, sprite.naturalWidth || sprite.width, sprite.naturalHeight || sprite.height);
         } else {
           ctx.fillStyle = "#1a1008";
           ctx.fillRect(0, 0, w, h);
@@ -1852,27 +3320,12 @@
         const { headX } = layout;
         const hx = headX + sway;
 
-        state.blinkTimer += dt;
-        if (state.blinkTimer > 3.2 + Math.random() * 1.2) {
-          state.blinkTimer = 0;
-          state.eyesOpen = false;
-          state.blinkEnd = now + 160;
-        }
-        if (state.blinkEnd && now >= state.blinkEnd) {
-          state.eyesOpen = true;
-          state.blinkEnd = 0;
-        }
-
         // Background.png already has the tavern character baked in
         if (!SCENE_HAS_CHARACTER) {
           const openSprite = charSprite || (assetsReady.character ? characterImg : null);
           const closedSprite = charBlinkSprite || (assetsReady.characterBlink ? characterBlinkImg : null);
           const hitSprite = charHitSprite || (assetsReady.characterHit ? characterHitImg : null);
-          const losePatch = charLoseSprite || (assetsReady.characterLose ? characterLoseImg : null);
-          const loseBandage = charLoseBandageSprite || (assetsReady.characterLoseBandage ? characterLoseBandageImg : null);
-          const loseSprite = state.faceHurtVariant === "bandage"
-            ? (loseBandage || losePatch)
-            : (losePatch || loseBandage);
+          const loseSprite = getLoseSprite(state.faceHurtVariant);
           const sprite = state.faceHurt
             ? (loseSprite || openSprite)
             : state.appleDamaged
@@ -1914,7 +3367,7 @@
           : 0;
         const ay = appleY + bob + bandageNudge;
         const sprite = state.appleDamaged
-          ? (appleHitSprite || (assetsReady.appleHit ? appleHitImg : null) || appleSprite)
+          ? (appleHitSprite || (assetsReady.appleHit ? appleHitImg : null))
           : (appleSprite || (assetsReady.apple ? appleImg : null));
 
         ctx.save();
@@ -2009,6 +3462,10 @@
         ctx.closePath();
       }
 
+      function isWheelBonusActive() {
+        return wheelModal.classList.contains("open");
+      }
+
       function render(now) {
         const dt = Math.min(0.05, (now - state.lastTime) / 1000 || 0.016);
         state.lastTime = now;
@@ -2039,17 +3496,20 @@
 
         const layout = sceneLayout();
         updateFlight(now, layout);
+        updateCharacterBlink(now);
 
         ctx.clearRect(0, 0, layout.w, layout.h);
         drawBackground(layout);
-        drawHumanCharacter(layout, dt, now);
-        drawApple(layout);
-        drawFaceMosaic(layout);
-        drawStuckArrows(layout);
-        drawPOVHand(layout, state.handPull, !!state.arrow);
-        drawFlyingArrow(layout);
-        drawParticles(dt);
-        drawThumpStars(dt);
+        if (!isWheelBonusActive()) {
+          drawHumanCharacter(layout, dt, now);
+          drawApple(layout);
+          drawFaceMosaic(layout);
+          drawStuckArrows(layout);
+          drawPOVHand(layout, state.handPull, !!state.arrow);
+          drawFlyingArrow(layout);
+          drawParticles(dt);
+          drawThumpStars(dt);
+        }
       }
 
       function computeFlightTarget(outcome, layout) {
@@ -2076,7 +3536,8 @@
         };
       }
 
-      function startFlight(outcome) {
+      function startFlight(outcome, flightOpts) {
+        const opts = flightOpts || {};
         const layout = sceneLayout();
         const { endX, endY, endAngle } = computeFlightTarget(outcome, layout);
 
@@ -2090,18 +3551,18 @@
         state.muzzleFlash = 1;
         state.muzzleFired = true;
         state.pistolRecoil = 1;
-        // Lose: gunshot + schedule exhale after the bang (Web Audio, gesture-safe)
         unlockSfx();
         playSfx(sfxShot);
         if (outcome !== "hit") {
           playLoseExhale();
           state.faceCensored = true;
           state.flinch = 1;
-          state.faceHurtVariant = Math.random() < 0.5 ? "patch" : "bandage";
-          showOverlay("miss", "TRY AGAIN", "", FACE_CENSOR_MS);
+          state.faceHurtVariant = pickLoseVariant();
+          if (!opts.cinematic) {
+            showOverlay("miss", "Try again", "", FACE_CENSOR_MS);
+          }
           clearTimeout(state.faceCensorTimer);
           state.faceCensorTimer = setTimeout(() => {
-            // Mosaic lifts into lasting hurt face — not the healthy default
             state.faceCensored = false;
             state.faceHurt = true;
             state.faceCensorTimer = null;
@@ -2113,7 +3574,10 @@
           endX, endY, endAngle,
           landed: false,
           landTime: 0,
-          settleTimer: null
+          settleTimer: null,
+          cinematic: !!opts.cinematic,
+          onCinematicComplete: opts.onCinematicComplete || null,
+          slowMo: !opts.cinematic && state.hits === STREAK_TRIGGER_HITS - 1
         };
         state.animating = true;
         state.arrowTrail = [];
@@ -2126,30 +3590,31 @@
         if (!f) return;
 
         const elapsed = now - f.startTime;
-        const total = PULL_MS + SNAP_MS + FLIGHT_MS;
+        const timing = flightTimings(f);
+        const total = timing.pullMs + timing.snapMs + timing.flightMs;
 
         // Hard failsafe: never leave Shoot locked if clocks desync
-        if (elapsed > total + SETTLE_MS + 2500 && !f._completing) {
+        if (elapsed > total + timing.settleMs + 2500 && !f._completing) {
           f._completing = true;
           completeFlight(layout);
           return;
         }
 
         if (f.landed) {
-          if (now - f.landTime >= SETTLE_MS) {
+          if (now - f.landTime >= timing.settleMs) {
             completeFlight(layout);
           }
           return;
         }
 
-        if (elapsed < PULL_MS) {
-          state.handPull = elapsed / PULL_MS;
+        if (elapsed < timing.pullMs) {
+          state.handPull = elapsed / timing.pullMs;
           state.arrow = null;
           return;
         }
 
-        if (elapsed < PULL_MS + SNAP_MS) {
-          state.handPull = 1 - (elapsed - PULL_MS) / SNAP_MS;
+        if (elapsed < timing.pullMs + timing.snapMs) {
+          state.handPull = 1 - (elapsed - timing.pullMs) / timing.snapMs;
           state.arrow = null;
           if (!state.muzzleFired) {
             state.muzzleFired = true;
@@ -2167,7 +3632,7 @@
 
         if (elapsed < total) {
           state.handPull = 0;
-          const flyT = (elapsed - PULL_MS - SNAP_MS) / FLIGHT_MS;
+          const flyT = (elapsed - timing.pullMs - timing.snapMs) / timing.flightMs;
           const e = 1 - Math.pow(1 - flyT, 2.3);
           const pose = getPOVHandPose(layout, 0);
           const start = { x: pose.nockX, y: pose.nockY };
@@ -2202,13 +3667,16 @@
           state.appleWobble = 0.05;
           state.appleDamaged = true;
           playSfx(sfxAppleHit);
+          if (!f.cinematic) onStreakAppleLand(state.hits + 1);
           spawnParticles(f.endX, f.endY, 24, ["#ffe08a", "#ff8a3a", "#6dca8a", "#fff", "#e8c547"]);
         } else {
           if (!state.faceCensored && !state.faceHurt) {
             state.faceCensored = true;
             state.flinch = 1;
-            state.faceHurtVariant = Math.random() < 0.5 ? "patch" : "bandage";
-            showOverlay("miss", "TRY AGAIN", "", FACE_CENSOR_MS);
+            state.faceHurtVariant = pickLoseVariant();
+            if (!f.cinematic) {
+              showOverlay("miss", "Try again", "", FACE_CENSOR_MS);
+            }
             clearTimeout(state.faceCensorTimer);
             state.faceCensorTimer = setTimeout(() => {
               state.faceCensored = false;
@@ -2226,13 +3694,14 @@
         clearTimeout(f.settleTimer);
         f.settleTimer = setTimeout(() => {
           if (state.flight === f) completeFlight(layout);
-        }, SETTLE_MS);
+        }, timing.settleMs);
       }
 
       function completeFlight(layout) {
         const f = state.flight;
         if (!f) return;
         if (f.settleTimer) clearTimeout(f.settleTimer);
+        const wasSlowMo = !!f.slowMo;
 
         state.flight = null;
         state.arrow = null;
@@ -2240,11 +3709,32 @@
         state.handPull = 0;
         state.animating = false;
 
+        if (f.cinematic) {
+          const done = f.onCinematicComplete;
+          if (f.outcome === "hit") {
+            setTimeout(() => { if (done) done(); }, 450);
+          } else {
+            const shotMs = PULL_MS + SNAP_MS + FLIGHT_MS + SETTLE_MS;
+            const wait = Math.max(0, FACE_CENSOR_MS - shotMs) + WHEEL_CINEMATIC_HURT_BEAT_MS;
+            setTimeout(() => { if (done) done(); }, wait);
+          }
+          updateUI();
+          return;
+        }
+
         if (f.outcome === "hit") {
           state.hits += 1;
           state.multiplier = Math.pow(2, state.hits);
-          showOverlay("hit", "BULLSEYE!", "+" + state.multiplier.toFixed(2) + "×");
+          onStreakHitRegistered(state.hits);
+          showOverlay("hit", "Bullseye!", "+" + state.multiplier.toFixed(2) + "×");
+          if (state.hits === STREAK_TRIGGER_HITS) {
+            state.wheelOffer = true;
+            state.wheelMode = "streak";
+            const wheelDelay = wasSlowMo ? 1100 : 450;
+            setTimeout(() => openWheelModal(), wheelDelay);
+          }
         } else {
+          stopStreakTensionLayer();
           endRoundLost();
         }
         updateUI();
@@ -2261,8 +3751,54 @@
         canvas.style.height = rect.height + "px";
       }
 
+      async function cheatFifthHit() {
+        if (state.animating || state.wheelSpinning || state.wheelCinematic || state.wheelIntro) return;
+        if (wheelBuyinConfirmModal.classList.contains("open")) return;
+
+        unlockSfx();
+        ensureBgVideoPlaying();
+        ensureMusicPlaying();
+
+        if (state.wheelOffer) {
+          state.wheelOffer = false;
+          state.wheelMode = null;
+          closeWheelModal();
+        }
+        if (state.flight && state.flight.settleTimer) clearTimeout(state.flight.settleTimer);
+        state.flight = null;
+        state.arrow = null;
+        state.arrowTrail = [];
+        state.animating = false;
+        state.handPull = 0;
+        state.flinch = 0;
+        state.faceCensored = false;
+        state.faceHurt = false;
+        clearTimeout(state.faceCensorTimer);
+        state.faceCensorTimer = null;
+
+        if (!state.roundActive) {
+          if (state.balance < state.bet - 1e-9) {
+            showToast("Need balance for test round");
+            return;
+          }
+          if (fairness.revealed) await commitServerSeed();
+          state.roundBet = state.bet;
+          state.balance = Math.round((state.balance - state.roundBet) * 100) / 100;
+          state.roundActive = true;
+          pulseBalance();
+        }
+
+        state.hits = STREAK_TRIGGER_HITS - 1;
+        state.multiplier = Math.pow(2, state.hits);
+        state.appleDamaged = false;
+        state.appleWobble = 0;
+        startStreakTensionLayer();
+        updateUI();
+        startFlight("hit");
+      }
+
       async function shoot() {
-        if (state.animating) return;
+        if (state.animating || state.wheelOffer || state.wheelSpinning || state.wheelCinematic || state.wheelIntro) return;
         unlockSfx();
         ensureBgVideoPlaying();
         ensureMusicPlaying();
@@ -2283,7 +3819,12 @@
       }
 
       function cashOut() {
-        if (!state.roundActive || state.hits < 1) return;
+        if (!state.roundActive || state.hits < 1 || state.wheelSpinning) return;
+        if (state.wheelOffer) {
+          state.wheelOffer = false;
+          state.wheelMode = null;
+          closeWheelModal();
+        }
         if (state.flight && state.flight.settleTimer) clearTimeout(state.flight.settleTimer);
         state.flight = null;
         state.arrow = null;
@@ -2295,7 +3836,7 @@
         const win = Math.round(state.roundBet * state.multiplier * 100) / 100;
         state.balance = Math.round((state.balance + win) * 100) / 100;
         pulseBalance();
-        showOverlay("cash", "CASHED OUT", "YOU WON " + state.multiplier.toFixed(2) + "× · " + formatMoney(win));
+        showOverlay("cash", "Cashed out", "You won " + state.multiplier.toFixed(2) + "× · " + formatMoney(win));
         advanceSeason();
         resetRound();
       }
@@ -2331,7 +3872,16 @@
       });
 
       btnShoot.addEventListener("click", shoot);
+      btnCheatFifthHit.addEventListener("click", () => { cheatFifthHit(); });
       btnCash.addEventListener("click", cashOut);
+      btnWheelTake.addEventListener("click", takeWheelLoot);
+      btnWheelGamble.addEventListener("click", gambleWheel);
+      btnWheelBuyin.addEventListener("click", () => { promptWheelBuyin(); });
+      btnWheelBuyinConfirm.addEventListener("click", () => { confirmWheelBuyin(); });
+      btnWheelBuyinCancel.addEventListener("click", () => { closeWheelBuyinConfirm(); });
+      wheelBuyinConfirmModal.addEventListener("click", (e) => {
+        if (e.target === wheelBuyinConfirmModal) closeWheelBuyinConfirm();
+      });
       document.getElementById("btnHelp").addEventListener("click", openHelp);
       document.getElementById("btnCloseHelp").addEventListener("click", closeHelp);
       document.getElementById("btnRtp").addEventListener("click", openRtp);
@@ -2342,6 +3892,13 @@
       rtpModal.addEventListener("click", (e) => {
         if (e.target === rtpModal) closeRtp();
       });
+      wheelModal.addEventListener("click", (e) => {
+        if (e.target === wheelModal && !state.wheelSpinning && state.wheelMode === "buyin") {
+          state.wheelMode = null;
+          state.wheelBuyinPaid = 0;
+          closeWheelModal();
+        }
+      });
       clientSeedInput.addEventListener("change", () => {
         fairness.clientSeed = clientSeedInput.value.trim() || randomSeed();
         clientSeedInput.value = fairness.clientSeed;
@@ -2350,7 +3907,11 @@
       });
 
       document.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && !helpModal.classList.contains("open") && !rtpModal.classList.contains("open")) {
+        const modalOpen = helpModal.classList.contains("open")
+          || rtpModal.classList.contains("open")
+          || wheelBuyinConfirmModal.classList.contains("open")
+          || wheelModal.classList.contains("open");
+        if (e.code === "Space" && !modalOpen) {
           e.preventDefault();
           shoot();
         }
@@ -2369,6 +3930,7 @@
 
       resizeCanvas();
       updateUI();
+      ensureBgVideoPlaying();
       fairness.clientSeed = loadClientSeed();
       commitServerSeed().then(updateFairnessUi).catch(() => {});
       try {
