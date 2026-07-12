@@ -1263,23 +1263,25 @@
       filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.65));
     }
 
-    .help-slide-visual--miss .help-miss-frame {
+    /* 408×612 sprite — frame is exactly top half (408×306) */
+    .help-slide-visual--miss .help-miss-crop {
       position: absolute;
       left: 50%;
-      bottom: 5%;
-      width: 76%;
-      height: 50%;
+      bottom: 8%;
+      width: 68%;
+      aspect-ratio: 408 / 306;
       transform: translateX(-50%);
       overflow: hidden;
       z-index: 1;
+      line-height: 0;
     }
 
-    .help-slide-visual--miss .help-miss-frame .help-art-pirate {
-      position: absolute;
-      left: 0;
-      top: 0;
+    .help-slide-visual--miss .help-miss-crop .help-art-pirate {
+      position: relative;
+      display: block;
       width: 100%;
       height: auto;
+      max-width: none;
       transform: none;
       object-fit: initial;
       filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
@@ -2055,8 +2057,8 @@
             <article class="help-slide" data-slide="2" aria-hidden="true">
               <div class="help-slide-visual help-slide-visual--miss">
                 <span class="help-slide-badge">Step 3</span>
-                <div class="help-miss-frame">
-                  <img class="help-art-pirate" src="character-lose-bandage.png" alt="" width="240" height="320" />
+                <div class="help-miss-crop">
+                  <img class="help-art-pirate" src="character-lose-bandage.png" alt="" width="408" height="612" />
                 </div>
               </div>
               <p class="help-slide-step">Step 3 of 5</p>
